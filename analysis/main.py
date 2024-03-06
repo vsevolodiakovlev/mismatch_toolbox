@@ -7,7 +7,7 @@ import importlib
 
 print('Please enter the path, where the labour_mismatch folder is stored (format: c:/Users/John/Desktop/code)')
 print()
-wd_path = input() + '/labour_mismatch/code/python'
+wd_path = input()
 sys.path.insert(0, wd_path)
 print('Spcified path: ' + wd_path)
 print()
