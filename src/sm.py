@@ -6,7 +6,7 @@ from labour_mismatch.src import clean
 from labour_mismatch.src import prep
 
 """
-LAST REVISED: 16.02.24
+LAST REVISED: 06.03.24
 
 dsa(piaac_df):
     - create variable for not challenged enough (notchal)
@@ -30,7 +30,7 @@ pf_thresholds(piaac_df, occ_variable, skill_variable, l_quantile, h_quantile):
         * create the variable using conditions and values 
         
 alv(piaac_df, skill_var, precision, log_df):
-    COMMENT NEEDED
+    COMMENT NEEDED real soon
 
 THE FOLLOWING COMMENTS NEED TO BE UPDATED
 pf_lit(piaac_df, precision):
