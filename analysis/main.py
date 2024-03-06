@@ -5,7 +5,13 @@ import sys
 import importlib
 # for importlib.reload(lm.sm)
 
-sys.path.insert(0, '/Users/seva/Desktop/projects/labour_mismatch/code/python')
+print('Please enter the path, where the labour_mismatch folder is stored (format: c:/Users/John/Desktop/code)')
+print()
+wd_path = input() + '/labour_mismatch/code/python'
+sys.path.insert(0, wd_path)
+print('Spcified path: ' + wd_path)
+print()
+
 import labour_mismatch as lm
 
 
@@ -18,14 +24,14 @@ current_section = '0.1 Load PIAAC Data'
 log_file = lm.utility.section(current_section, log_file)
 
 # set the directory
-os.chdir("/Users/seva/Desktop/projects/labour_mismatch/code/python")
-log_record = 'directory is set to /Users/seva/Desktop/projects/labour_mismatch/code/python'
+os.chdir(wd_path)
+log_record = 'directory is set to ' + wd_path
 log_file = lm.utility.log(log_file, log_record)
 
 # load PIAAC dataset
 log_record = 'loading piaac dataset, please wait'
 log_file = lm.utility.log(log_file, log_record)
-piaac = pd.read_csv("/Users/seva/Desktop/projects/piaac1/processed/no_labels/piaac1_nl.csv", low_memory=False)
+piaac = pd.read_csv(wd_path + '/piaac_data.csv', low_memory=False)
 
 # 0.2 Preparation
 current_section = '0.2 Preparations'
