@@ -5,11 +5,14 @@ import sys
 import importlib
 # for importlib.reload(lm.sm)
 
-print('Please enter the path, where the labour_mismatch folder is stored (format: c:/Users/John/Desktop/code)')
+file_wd = os.getcwd()
+if '/' in file_wd:
+    wd = '/'.join(file_wd.split('/')[:-1])
+elif '\\' in file_wd:
+    wd = '/'.join(file_wd.split('\\')[:-1])
+sys.path.insert(0, wd)
 print()
-wd_path = input()
-sys.path.insert(0, wd_path)
-print('Spcified path: ' + wd_path)
+print('Working directory is set to: ' + os.getcwd())
 print()
 
 import labour_mismatch as lm
