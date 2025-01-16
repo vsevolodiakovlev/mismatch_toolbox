@@ -290,6 +290,40 @@ for i in [0, 1, 2]:
     log_record = 'file is saved as ' + 'all_' + sharename[i] + '_by_cntrycode' + '.pdf'
     log_file = lm.utility.log(log_file, log_record)
 
+current_section = '2.7.2 Heatmaps: main measures (for slides)'
+log_file = lm.utility.section(current_section, log_file)
+
+titles = ['Under-Matched', 'Well-Matched', 'Over-Matched']
+sharename = ['undershare', 'wellshare', 'overshare']
+x_labels = [True, True, True]
+y_labels = [False, False, True]
+colorbars = [True, False, False]
+numbers = True
+for i in [0, 1, 2]:
+    measures = ['ja_' + sharename[i] + '_by_cntrycode',
+                'rm_mode_1_' + sharename[i] + '_by_cntrycode',
+                'isa_1_' + sharename[i] + '_by_cntrycode',
+                'pf_lit_005_' + sharename[i] + '_by_cntrycode',
+                'pf_num_005_' + sharename[i] + '_by_cntrycode',
+                'pf_psl_005_' + sharename[i] + '_by_cntrycode',
+                'alv_lit_15_' + sharename[i] + '_by_cntrycode',
+                'alv_num_15_' + sharename[i] + '_by_cntrycode',
+                'alv_psl_15_' + sharename[i] + '_by_cntrycode'
+                ]
+    labels = ['Job Analysis',
+              'Realized Matches',
+              'Indirect Self-Assessment',
+              'PF Literacy',
+              'PF Numeracy',
+              'PF Problem-Solving',
+              'ALV Literacy',
+              'ALV Numeracy',
+              'ALV Problem-Solving'
+              ]
+    lm.graphs.shares_heatmap_slides(piaac, measures, labels, 'cntrycode', 'earn', titles[i], (8, 15), 'all_' + sharename[i] + '_by_cntrycode_slides', y_labels[i], x_labels[i], colorbars[i], numbers, True)
+    log_record = 'file is saved as ' + 'all_' + sharename[i] + '_by_cntrycode_slides' + '.pdf'
+    log_file = lm.utility.log(log_file, log_record)
+
 current_section = '2.8 Heatmaps: correlation analysis'
 log_file = lm.utility.section(current_section, log_file)
 
