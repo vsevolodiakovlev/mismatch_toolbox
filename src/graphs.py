@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from labour_mismatch.src import utility
+from src import utility
 
 """
 LAST REVISED: 09.04.23

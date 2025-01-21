@@ -1,9 +1,9 @@
 import pandas as pd
 import numpy as np
 import math
-from labour_mismatch.src import utility
-from labour_mismatch.src import clean
-from labour_mismatch.src import prep
+from src import utility
+from src import clean
+from src import prep
 
 """
 LAST REVISED: 06.03.24

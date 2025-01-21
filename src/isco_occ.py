@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
 # noinspection PyUnresolvedReferences
-from labour_mismatch.src import utility
-from labour_mismatch.src import clean
+from src import utility
+from src import clean
 
 """
 version: 27.07.23

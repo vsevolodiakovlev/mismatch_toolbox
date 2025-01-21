@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
-from labour_mismatch.src import utility
-from labour_mismatch.src import clean
+from src import utility
+from src import clean
 
 """
 LAST REVISED: 26.07.23

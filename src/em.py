@@ -2,8 +2,8 @@ import pandas as pd
 import numpy as np
 import statistics as st
 import math
-from labour_mismatch.src import utility
-from labour_mismatch.src import clean
+from src import utility
+from src import clean
 
 """
 LAST REVISED: 26.01.23
