@@ -1,28 +1,35 @@
+"""
+A set of functions for data cleaning.
+
+Functions:
+----------
+
+drop_nan(df, var, log_df)
+    Drop observations containing missing values for a given variable.
+    last update: 22/01/2025
+
+drop_val(df, var, values_list, operator, log_df)
+    Drop observations with specific values for a given variable.
+    last update: 22/01/2025
+"""
 from src import utility
-
-"""
-THIS REQUIRES REVIEW AND UPDATE
-
-version: 27.07.23
-FUNCTIONS
-    drop_nan(df, var, log_df)
-    drop_val(df, var, values_list, operator, log_df)
-"""
 
 def drop_nan(df, var, log_df):
     
     """
+    Drop observations containing missing values for a given variable.
+
     Parameters
     ----------
     df : pandas.core.frame.DataFrame, dataset.
     var : str, variable name.
     log_df : pandas.core.frame.DataFrame, log file.
-
+    
     Returns
     -------
-    df : pandas.core.frame.DataFrame, dataset cleaned of missing values.
+    df : pandas.core.frame.DataFrame, updated dataset. 
     log_df : pandas.core.frame.DataFrame, updated log file.
-    
+
     Description
     -----------
     1. identify whether the variable is string or numeric;
@@ -30,8 +37,9 @@ def drop_nan(df, var, log_df):
     3. if nueric: identify observations containing missing values;
     4. drop observation containing either missing values or 'nan';
     5. repeat the missing values check;
-    6. register the changes in [log_df].
+    6. register the changes in [log_df].    
     """
+
     if (df[var].dtypes == 'O') == True:
         nan = 'nan'
         if (nan in df[var].unique()) == True:
@@ -112,6 +120,8 @@ def drop_nan(df, var, log_df):
 def drop_val(df, var, values_list, operator, log_df):
     
     """
+    Drop observations with specific values for a given variable.
+
     Parameters
     ----------
     df : pandas.core.frame.DataFrame, dataset.

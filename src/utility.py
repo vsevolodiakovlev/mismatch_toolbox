@@ -1,32 +1,45 @@
+"""
+A set of utility functions for data processing and analysis. 
+
+Functions:
+----------
+
+section(new_section, log_df) 
+    Create a new section in the log file.
+    last update: 22/01/2025
+
+log(log_df, record) 
+    Add a new record to the log file.
+    last update: 22/01/2025
+
+print_tab(df) 
+    Print a dataframe in a tabular format.
+    last update: 22/01/2025
+    
+mismatch_shares(piaac_df, mismatch_variable, feature)
+    Compute mismatch shares within each group.
+    last update: 22/01/2025
+
+mcc_matrix(df, feature_list)
+    Compute Matthew's correlation coefficient matrix.
+    last update: 22/01/2025
+
+mismatch_split(piaac_df, measure_list)
+    Split each measure into 3 binary variables.
+    last update: 22/01/2025
+"""
+
 import pandas as pd
 import tabulate as tab
 import numpy as np
 import math
 from sklearn.metrics import matthews_corrcoef
 
-"""
-version: 27.07.23
-
-FUNCTIONS
-    - section(new_section, log_df)
-    - log(log_df, record)
-    - print_tab(df)
-    - mismatch_shares(piaac_df, mismatch_variable, feature):
-        - generate empty conditions and values lists
-        - for each unique value of a specified feature,
-            * generate normilized value counts series for a specified mismatch variable
-            * identify a row corresponding to the mismatch value of 0 (well-matched) in the index
-            * append the corresponding value (share) from column 1 of the series to the list of values
-            * if desired row is not identified, append 0
-            * append the value of the feature to the conditions list
-        - using the conditions and values lists, generate variable for the sares of well-matched workers
-        - repeat the above for under-matched and over-matched workers
-"""
-
-
 def section(new_section, log_df):
 
     """
+    Create a new section in the log file.
+
     Parameters
     ----------
     new_section : str, contains new sectio title.
@@ -61,6 +74,8 @@ def section(new_section, log_df):
 def log(log_df, record):
 
     """
+    Add a new record to the log file.
+
     Parameters
     ----------
     log_df : pandas.core.frame.DataFrame, log dataframe with 3 columns ('index', 'section', 'record').
@@ -92,7 +107,10 @@ def log(log_df, record):
 
 
 def print_tab(df):
+
     """
+    Print a dataframe in a tabular format.
+
     Parameters
     ----------
     df : pandas.core.frame.DataFrame, any dataframe.
@@ -115,6 +133,8 @@ def print_tab(df):
 def mismatch_shares(piaac_df, mismatch_variable, feature, log_df):
     
     """
+    Compute mismatch shares within each group.
+
     Parameters
     ----------
     piaac_df : pandas.core.frame.DataFrame, piaac dataset.
@@ -198,6 +218,27 @@ def mismatch_shares(piaac_df, mismatch_variable, feature, log_df):
 
 
 def mcc_matrix(df, feature_list):
+    
+    """
+    Compute Matthew's correlation coefficient matrix.
+
+    Parameters
+    ----------
+    df : pandas.core.frame.DataFrame, dataset.
+    feature_list : list, list of features.
+
+    Returns
+    -------
+    mcc_matrix : pandas.core.frame.DataFrame, Matthew's correlation coefficient matrix.
+
+    Description
+    -----------
+    1. for each pair of features in [feature_list]:
+        * compute Matthew's correlation coefficient;
+        * fill the matrix with the computed values;
+    2. return the matrix.
+    """
+
     mcc_matrix = pd.DataFrame(index = feature_list,
                               columns = feature_list)
     for measure_row in feature_list:
@@ -213,6 +254,32 @@ def mcc_matrix(df, feature_list):
             
 
 def mismatch_split(piaac_df, measure_list, log_df):
+
+    """
+    Split each measure into 3 binary variables.
+
+    Parameters
+    ----------
+    piaac_df : pandas.core.frame.DataFrame, piaac dataset.
+    measure_list : list, list of measures.
+    log_df : pandas.core.frame.DataFrame, log file.
+
+    Returns
+    -------
+    piaac_df : pandas.core.frame.DataFrame, updated piaac dataset.
+    log_df : pandas.core.frame.DataFrame, updated log file.
+
+    Description
+    -----------
+    1. for each measure in [measure_list]:
+        * create 3 binary variables:
+            - [measure]_u: 1 if undermatched ([measure] == -1) and 0 otherwise;
+            - [measure]_w: 1 if well-matched ([measure] == 0) and 0 otherwise;
+            - [measure]_o: 1 if overmatched ([measure] == 1) and 0 otherwise;
+        * register the changes in [log_df].
+    2. return updated [piaac_df] and [log_df].
+    """
+
     for measure in measure_list:
         
         log_record = ('splitting [' + measure + '] into 3 binary variables')
@@ -240,5 +307,3 @@ def mismatch_split(piaac_df, measure_list, log_df):
         log_df = log(log_df, log_record)
         
     return piaac_df, log_df
-
-
