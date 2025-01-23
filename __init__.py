@@ -14,6 +14,10 @@ clean
     A set of functions for data cleaning.
     last update: 23/01/2025
 
+isco
+    Clean existing and create additional occupation and education variables based on ISCO-08.
+    last update: 23/01/2025
+
 author: Vsevolod Iakovlev
 email: vsevolod.v.iakovlev@gmail.com
 """
@@ -21,9 +25,7 @@ email: vsevolod.v.iakovlev@gmail.com
 from .src import (
     clean,
     em,
-    isco_sl,
-    isco_occ,
-    prep,
+    isco,
     sm,
     utility,
     graphs

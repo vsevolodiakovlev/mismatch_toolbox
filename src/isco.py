@@ -1,25 +1,54 @@
+"""
+Clean existing and create additional occupation and education variables based on ISCO-08.
+
+Functions
+---------
+
+occupations(piaac_df, log_df)
+    Clean ISCO-08 occpuation variables and create custom occupation groups.
+    last update: 23/01/2025
+
+education(piaac_df, log_df)
+    Clean education variables and convert ISCED to ISCO-08 skill level.
+    last update: 23/01/2025
+"""
+
 import pandas as pd
 import numpy as np
-# noinspection PyUnresolvedReferences
 from src import utility
 from src import clean
 
-"""
-version: 27.07.23
-
-occupations(piaac_df):
-    - convert current job (isco1c, isco2c) and last job (isco1l, isco2l) 1-digit and 2-digit ISCO-08 occupation groups to float
-    - check and drop missing values for 1-digit and 2-digit occupation groups
-    - drop observations for which isco1c is encoded as missing (9995, 9996, 9997, 9998, 9999) 
-    - create variables isco1c_lbl and isco2c_lbl for isco1c and isco2c labels
-    - create vartiable isco_lbl for custom occupation groups based on ISCO-08 required skill level
-    - check and drop missing values for custom occupation groups
-    - drop armed orces due to small sample
-    - create variables cntry_isco_lbl, cntry_isco1c_lbl and cntry_isco2c_lbl for country-specific occupation groups
-
-"""
-
 def occupations(piaac_df, log_df):
+
+    """
+    Clean ISCO-08 occpuation variables and create custom occupation groups
+
+    Parameters
+    ----------
+    piaac_df : DataFrame
+        PIAAC dataset
+    log_df : DataFrame
+        log DataFrame
+
+    Returns
+    -------
+    piaac_df : DataFrame
+        PIAAC dataset with cleaned occupation variables and created custom occupation groups
+    log_df : DataFrame
+        log DataFrame
+
+    Description
+    -----------
+    1. Convert current job (isco1c, isco2c) and last job (isco1l, isco2l) 1-digit and 2-digit ISCO-08 occupation groups to float
+    2. Check and drop missing values for 1-digit and 2-digit occupation groups
+    3. Drop observations for which isco1c is encoded as missing (9995, 9996, 9997, 9998, 9999)
+    4. Create variables isco1c_lbl and isco2c_lbl for isco1c and isco2c labels
+    5. Create vartiable isco_lbl for custom occupation groups based on ISCO-08 required skill level
+    6. Check and drop missing values for custom occupation
+    7. Drop armed orces due to small sample
+    8. Create variables cntry_isco_lbl, cntry_isco1c_lbl and cntry_isco2c_lbl for country-specific occupation groups
+    9. Drop country-specific occupations groups with n<30
+    """
 
     # converting isco1c, isco2c, isco1l and isco2l to float
     log_record = 'converting isco1c, isco2c, isco1l and isco2l to float'
@@ -228,5 +257,108 @@ def occupations(piaac_df, log_df):
     
     piaac_df, log_df = clean.drop_val(piaac_df, 'cntry_isco_lbl', low_sample_occs, '==', log_df)
         
+    
+    return piaac_df, log_df
+
+
+def education(piaac_df, log_df):
+
+    """
+    Clean education variables and convert ISCED to ISCO-08 skill level.
+
+    Parameters
+    ----------
+    piaac_df : DataFrame
+        PIAAC dataset
+    log_df : DataFrame
+        log DataFrame
+
+    Returns
+    -------
+    piaac_df : DataFrame
+        PIAAC dataset with cleaned education variables and created ISCO-08 skill level
+    log_df : DataFrame
+        log DataFrame
+
+    Description
+    -----------
+    1. Convert ISCED (b_q01a) to a float
+    2. Check and drop for missing values in ISCED
+    3. Create skill level variable using specified conditions and values lists
+    4. Print table of ISCED - ISCO-08 skill level mapping
+    5. Converting obtained ISCO-08 skill level (isco08_sl_o) to float
+    6. Check and drop for missing values in obtained ISCO-08 skill level
+    7. Convert year of finish (b_q01c2) to float
+    8. Creating a variable for the year when higher education decision was supposedly made
+    9. Creating a variable for country specific decision year bins
+    """
+    
+    drop_count_sl = pd.DataFrame(columns=[])
+
+    # convert ISCED (b_q01a) to a float
+    log_record = 'converting ISCED level to a float'
+    log_df = utility.log(log_df, log_record)
+    piaac_df['b_q01a'] = pd.to_numeric(piaac_df['b_q01a'], errors='coerce')
+    
+    # check and drop for missing values in ISCED
+    var = 'b_q01a'
+    log_record = 'missing values cleaning skipped for ' + var
+    log_df = utility.log(log_df, log_record)
+    log_record = (str(piaac_df.shape[0] - piaac_df[var].isnull().value_counts()[False]) + ' observations have the value of nan for ' + var)
+    log_df = utility.log(log_df, log_record)
+
+    log_record = 'creating a variable for obtained ISCO-08 skill level'
+    log_df = utility.log(log_df, log_record)
+    # create a list of conditions for conversion of ISCED into skill level
+    conditions = [
+        (piaac_df['b_q01a'] == 1),
+        (piaac_df['b_q01a'] > 1) & (piaac_df['b_q01a'] < 11),
+        (piaac_df['b_q01a'] == 11),
+        (piaac_df['b_q01a'] > 11)]
+    # create a list of values for skill level
+    values = [1,
+              2,
+              3,
+              4]
+    # create skill level variable using specified conditions and respective values
+    piaac_df['isco08_sl_o'] = np.select(conditions, values, default=float('nan'))
+
+    # print table of ISCED - skill level mapping
+    log_record = 'print table of ISCED - skill level mapping'
+    log_df = utility.log(log_df, log_record)
+    utility.print_tab(pd.crosstab(index=piaac_df['b_q01a'], columns=piaac_df['isco08_sl_o'], margins=True))
+
+    # converting isco08_sl_o to float
+    log_record = 'converting isco08_sl_o to float'
+    log_df = utility.log(log_df, log_record)
+    piaac_df['isco08_sl_o'] = pd.to_numeric(piaac_df['isco08_sl_o'], errors='coerce')
+    
+    # check and drop for missing values in obtained skill level (don't)
+    var = 'isco08_sl_o'
+    log_record = 'missing values cleaning skipped for ' + var
+    log_df = utility.log(log_df, log_record)
+    log_record = (str(piaac_df.shape[0] - piaac_df[var].isnull().value_counts()[False]) + ' observations have the value of nan for ' + var)
+    log_df = utility.log(log_df, log_record)
+
+    # convert b_q01c2 (year of finish) to float
+    log_record = 'convert b_q01c2 (year of finish) to float'
+    log_df = utility.log(log_df, log_record)
+    piaac_df['b_q01c2'] = pd.to_numeric(piaac_df['b_q01c2'], errors='coerce')
+
+    # creating a variable for the year when higher education decision was supposedly made
+    log_record = 'creating a variable for the year when higher education decision was supposedly made'
+    log_df = utility.log(log_df, log_record)
+    conditions =[
+        (piaac_df['b_q01a'] < 11),
+        (piaac_df['b_q01a'] >= 11)]
+    values = [
+        piaac_df['b_q01c2'],
+        piaac_df['b_q01c2'] - 3]
+    piaac_df['decis_yr'] = np.select(conditions, values, default=float('nan'))
+
+    # creating a variable for country specific decision year bins
+    log_record = 'creating a variable for country specific decision year bins'
+    log_df = utility.log(log_df, log_record)
+    piaac_df['cntry_yr'] = piaac_df['cntrycode'] + ' ' + piaac_df['decis_yr'].astype(str).str[:4]
     
     return piaac_df, log_df
