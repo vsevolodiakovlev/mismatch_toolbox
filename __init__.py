@@ -12,7 +12,7 @@ utility
 
 clean
     A set of functions for data cleaning.
-    last update: 22/01/2025
+    last update: 23/01/2025
 
 author: Vsevolod Iakovlev
 email: vsevolod.v.iakovlev@gmail.com
