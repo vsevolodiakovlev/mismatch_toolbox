@@ -16,6 +16,30 @@ shares_heatmap(piaac_df, measures_list, measures_labels, cluster, feature, title
 """
 
 def formatFloat(fmt, val):
+  
+  """
+  Convert a float to a string with a specified format.
+
+  Parameters:
+  ----------
+    fmt : str
+        A format string.
+    val : float
+        A float to be formatted.
+
+    Returns:
+    -------
+    str
+        A formatted string.
+
+    Example:
+    --------
+    >>> formatFloat("%.2f", 3.14159)
+    "3.14"
+    >>> formatFloat("%.2f", -3.14159)
+    "-3.14"
+  """
+
   ret = fmt % val
   if ret.startswith("0."):
     return ret[1:]
@@ -23,47 +47,45 @@ def formatFloat(fmt, val):
     return "-" + ret[2:]
   return ret
 
-def eddecyr_wellshare(piaac_df, year_start, year_finish, country):
-
-    # close all open graphs
-    plt.close('all')
-
-    # define the x-axis as the year of tertiary education decision
-    x = piaac_df.loc[piaac_df['cntryname'] == country, 'decis_yr']
-
-    # define y-axis as the share of well-matched in RM-mode measure and plot the line
-    y = piaac_df.loc[piaac_df['cntryname'] == country, 'rm_mode_wellshare']
-    plt.plot(x, y, linewidth=2.0, label='Realisted Matches')
-
-    # define y-axis as the share of well-matched in JA measure and plot the line
-    y = piaac_df.loc[piaac_df['cntryname'] == country, 'ja_wellshare']
-    plt.plot(x, y, linewidth=2.0, label='Job Assessment')
-
-    # define y-axis as the share of well-matched in PF-literacu measure and plot the line
-    y = piaac_df.loc[piaac_df['cntryname'] == country, 'sm_lit_wellshare']
-    plt.plot(x, y, linewidth=2.0, label='Pellizzari-Fichen (Literacy)')
-
-    # define y-axis as the share of well-matched in PF-numeracy measure and plot the line
-    y = piaac_df.loc[piaac_df['cntryname'] == country, 'sm_num_wellshare']
-    plt.plot(x, y, linewidth=2.0, label='Pellizzari-Fichen (Numeracy)')
-
-    # defined the title and axis' labels
-    plt.xlabel('Year of Tertiary Education Decision')
-    plt.ylabel('Share of Well-Matched')
-    plt.title(country + ', n=' + str(piaac_df['cntryname'].value_counts()[country]))
-
-    # settings: legend, grid, x-axis range, y-axis range
-    plt.legend()
-    plt.grid(True)
-    plt.xlim(year_start, year_finish)
-    plt.ylim(0, 1)
-
-    # draw the graph
-    plt.draw()
-
-
 def shares_heatmap(piaac_df, measures_list, measures_labels, cluster, feature, title, size, filename, y_labels,
                     x_labels, colorbar, numbers, nan_present):
+
+    """
+    Plot a heatmap of the mismatch shares.
+
+    Parameters:
+    ----------
+    piaac_df : DataFrame
+        A DataFrame containing the PIAAC data.
+    measures_list : list
+        A list of the mismatch measures variable names.
+    measures_labels : list
+        A list of the labels for the mismatch measures.
+    cluster : str
+        A variable name identifying the group level.
+    feature : str
+        A variable name across which the mismatch shares are plotted.
+    title : str
+        A title of the heatmap.
+    size : tuple
+        A size of the heatmap.
+    filename : str
+        A filename to save the heatmap.
+    y_labels : bool
+        A boolean indicating whether to display y-axis labels.
+    x_labels : bool
+        A boolean indicating whether to display x-axis labels.
+    colorbar : bool
+        A boolean indicating whether to display a colorbar.
+    numbers : bool
+        A boolean indicating whether to display numbers in the heatmap.
+    nan_present : bool
+        A boolean indicating whether NaN values are present in the data.
+
+    Returns:
+    -------
+    None
+    """
 
     # close all open graphs
     plt.close('all')
@@ -92,7 +114,6 @@ def shares_heatmap(piaac_df, measures_list, measures_labels, cluster, feature, t
     #x = y_old
     #y = x_old
     
-
     fig = plt.figure(figsize=size)
     ax = fig.subplots()
     
