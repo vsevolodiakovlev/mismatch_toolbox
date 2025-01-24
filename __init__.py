@@ -1,10 +1,13 @@
 """
 Labout Mismatch Toolbox for PIAAC
 
-This package provides a set of functions to clean, prepare, 
-and analyze the PIAAC data for the purpose of studying labor mismatch.
-For the desription of the measures, please refer to Section 3: Labour 
-Mismatch Measurement Frameworks in [1].
+This package provides a set of functions designed to compute education 
+and skill mismatch using data from the 1st Cycle of the Survey of Adult 
+Skills (PIAAC). The currently available measures include job analysis, 
+realised matches, indirect self-assessment, direct self-assessment, 
+Pellizzari-Fichen, and Allen-Levels-Van-der-Velden.For the desription 
+of the measures, please refer to Section 3: Labour Mismatch Measurement 
+Frameworks in [1].
 
 Modules
 --------
