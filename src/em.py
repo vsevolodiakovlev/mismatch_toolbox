@@ -181,6 +181,8 @@ def rm_mean(piaac_df, SDs, log_df):
     
     # count missing values in mean-based RM mismatch
     var = 'rm_mean_' + str(SDs).replace('.', '')
+    log_record = 'missing values cleaning skipped for [' + var + ']'
+    log_df = utility.log(log_df, log_record)
     log_record = (str(piaac_df.shape[0] - piaac_df[var].isnull().value_counts()[False]) + ' observations have the value of nan for ' + var)
     log_df = utility.log(log_df, log_record)
     
@@ -243,6 +245,8 @@ def rm_mode(piaac_df, SDs, log_df):
     
     # count missing values in mode-based RM mismatch
     var = 'rm_mode_' + str(SDs).replace('.', '')
+    log_record = 'missing values cleaning skipped for [' + var + ']'
+    log_df = utility.log(log_df, log_record)
     log_record = (str(piaac_df.shape[0] - piaac_df[var].isnull().value_counts()[False]) + ' observations have the value of nan for ' + var)
     log_df = utility.log(log_df, log_record)
     
@@ -326,6 +330,8 @@ def ja(piaac_df, log_df):
     
     # count missing values in JA mismatch
     var = 'ja'
+    log_record = 'missing values cleaning skipped for [' + var + ']'
+    log_df = utility.log(log_df, log_record)
     log_record = (str(piaac_df.shape[0] - piaac_df[var].isnull().value_counts()[False]) + ' observations have the value of nan for ' + var)
     log_df = utility.log(log_df, log_record)
     
@@ -387,6 +393,8 @@ def isa(piaac_df, gap, log_df):
     
     # count missing values in ISA mismatch
     var = 'isa_' + str(gap).replace('.', '')
+    log_record = 'missing values cleaning skipped for [' + var + ']'
+    log_df = utility.log(log_df, log_record)
     log_record = (str(piaac_df.shape[0] - piaac_df[var].isnull().value_counts()[False]) + ' observations have the value of nan for ' + var)
     log_df = utility.log(log_df, log_record)
     

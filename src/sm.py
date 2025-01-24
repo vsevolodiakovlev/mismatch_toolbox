@@ -54,6 +54,8 @@ def dsa(piaac_df, log_df):
     4. Create variable for feeling need in training (needtrain)
     5. Create variable for DSA skill mismatch (dsa)
     6. Create variable for "relaxed" DSA skill mismatch (dsa_relaxed)
+    7. Count missing values in dsa
+    8. Count missing values in dsa_relaxed
     """
 
     # converting f_q07a to float
@@ -129,12 +131,20 @@ def dsa(piaac_df, log_df):
         0]
     piaac_df['dsa_relaxed'] = np.select(conditions, values, default=math.nan)
     
+    # count missing values in dsa
     var = 'dsa'
-    log_record = 'missing values cleaning skipped for ' + var
+    log_record = 'missing values cleaning skipped for [' + var + ']'
     log_df = utility.log(log_df, log_record)
     log_record = (str(piaac_df.shape[0] - piaac_df[var].isnull().value_counts()[False]) + ' observations have the value of nan for ' + var)
     log_df = utility.log(log_df, log_record)
     
+    # count missing values in dsa_relaxed
+    var = 'dsa_relaxed'
+    log_record = 'missing values cleaning skipped for [' + var + ']'
+    log_df = utility.log(log_df, log_record)
+    log_record = (str(piaac_df.shape[0] - piaac_df[var].isnull().value_counts()[False]) + ' observations have the value of nan for ' + var)
+    log_df = utility.log(log_df, log_record)
+
     return piaac_df, log_df
 
 
@@ -179,7 +189,7 @@ def pf_thresholds(piaac_df, occ_variable, skill_variable, dsa_relaxed, l_quantil
     6. Append occupation group to the list of conditions
     7. Append the higher quantile to the list values
     8. Create the variable using conditions and values
-    9. Check and drop for missing values in mismatch thresholds
+    9. Count missing values in mismatch thresholds
     """
     
     if dsa_relaxed == True:
@@ -206,15 +216,15 @@ def pf_thresholds(piaac_df, occ_variable, skill_variable, dsa_relaxed, l_quantil
         values.append(sm_max)
     piaac_df[dsa_var + '_' + skill_variable + '_max'] = np.select(conditions, values, default=math.nan)
     
-    # check and drop for missing values in mismatch thresholds
+    # count missing values in mismatch thresholds
     var = dsa_var + '_' + skill_variable + '_max'
-    log_record = 'missing values cleaning skipped for ' + var
+    log_record = 'missing values cleaning skipped for [' + var + ']'
     log_df = utility.log(log_df, log_record)
     log_record = (str(piaac_df.shape[0] - piaac_df[var].isnull().value_counts()[False]) + ' observations have the value of nan for ' + var)
     log_df = utility.log(log_df, log_record)
     
     var = dsa_var + '_' + skill_variable + '_min'
-    log_record = 'missing values cleaning skipped for ' + var
+    log_record = 'missing values cleaning skipped for [' + var + ']'
     log_df = utility.log(log_df, log_record)
     log_record = (str(piaac_df.shape[0] - piaac_df[var].isnull().value_counts()[False]) + ' observations have the value of nan for ' + var)
     log_df = utility.log(log_df, log_record)
@@ -250,10 +260,10 @@ def pf(piaac_df, skill_var, precision, dsa_relaxed, log_df):
     Description:
     ------------
     1. Create variable for the average of plausible values of the skill variable
-    2. Convert the skill variable to float, check and drop for missing values
+    2. Convert the skill variable to float, count missing values
     3. Create skill mismatch thresholds using pf_thresholds()
     4. Create variable for skill mismatch
-    5. Check and drop for missing values in skill mismatch
+    5. Count missing values in skill mismatch
     """
 
     # creating variable for the average of plausible values
@@ -275,7 +285,7 @@ def pf(piaac_df, skill_var, precision, dsa_relaxed, log_df):
     log_df = utility.log(log_df, log_record)
     piaac_df[skill_var] = pd.to_numeric(piaac_df[skill_var], errors='coerce')
     
-    # check and drop for missing values in [skill_var] (don't)
+    # count missing values in [skill_var]
     var = skill_var
     log_record = 'missing values cleaning skipped for [' + var + ']'
     log_df = utility.log(log_df, log_record)
@@ -311,7 +321,7 @@ def pf(piaac_df, skill_var, precision, dsa_relaxed, log_df):
         1]
     piaac_df[mismatch_var] = np.select(conditions, values, default=math.nan)
     
-    # check and drop for missing values in [mismatch_var]
+    # count missing values in [mismatch_var]
     var = mismatch_var
     log_record = 'missing values cleaning skipped for [' + var + ']'
     log_df = utility.log(log_df, log_record)
@@ -347,7 +357,7 @@ def alv(piaac_df, skill_var, precision, log_df):
     Description:
     ------------
     1. Create variable for the average of plausible values of the skill variable
-    2. Convert the skill variable to float, check and drop for missing values
+    2. Convert the skill variable to float, count missing values
     3. Create and standardise aggregate skill use variable  
     4. Create Allen-Levels-van-der-Velden skill mismatch variable
     5. Check and drop for missing values in alv skill mismatch
@@ -372,7 +382,7 @@ def alv(piaac_df, skill_var, precision, log_df):
     log_df = utility.log(log_df, log_record)
     piaac_df[skill_var] = pd.to_numeric(piaac_df[skill_var], errors='coerce')
 
-    # check and drop for missing values in [skill_var]
+    # count missing values in [skill_var]
     var = skill_var
     log_record = 'missing values cleaning skipped for [' + var + ']'
     log_df = utility.log(log_df, log_record)
@@ -444,7 +454,7 @@ def alv(piaac_df, skill_var, precision, log_df):
         ]
         piaac_df['alv_lit_' + str(precision).replace('.', '')] = np.select(conditions, values, default=math.nan)
 
-        # check and drop for missing values in [alv_lit_] (don't)
+        # count missing values in [alv_lit_]
         var = 'alv_lit_' + str(precision).replace('.', '')
         log_record = 'missing values cleaning skipped for [' + var + ']'
         log_df = utility.log(log_df, log_record)
@@ -500,7 +510,7 @@ def alv(piaac_df, skill_var, precision, log_df):
         ]
         piaac_df['alv_num_' + str(precision).replace('.', '')] = np.select(conditions, values, default=math.nan)
 
-        # check and drop for missing values in [alv_num_] (don't)
+        # count missing values in [alv_num_]
         var = 'alv_num_' + str(precision).replace('.', '')
         log_record = 'missing values cleaning skipped for [' + var + ']'
         log_df = utility.log(log_df, log_record)
@@ -549,7 +559,7 @@ def alv(piaac_df, skill_var, precision, log_df):
         ]
         piaac_df['alv_psl_' + str(precision).replace('.', '')] = np.select(conditions, values, default=math.nan)
 
-        # check and drop for missing values in [alv_psl_] (don't)
+        # count missing values in [alv_psl_]
         var = 'alv_psl_' + str(precision).replace('.', '')
         log_record = 'missing values cleaning skipped for [' + var + ']'
         log_df = utility.log(log_df, log_record)

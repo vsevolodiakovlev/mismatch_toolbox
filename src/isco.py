@@ -283,11 +283,11 @@ def education(piaac_df, log_df):
     Description
     -----------
     1. Convert ISCED (b_q01a) to a float
-    2. Check and drop for missing values in ISCED
+    2. Count missing values in ISCED
     3. Create skill level variable using specified conditions and values lists
     4. Print table of ISCED - ISCO-08 skill level mapping
     5. Converting obtained ISCO-08 skill level (isco08_sl_o) to float
-    6. Check and drop for missing values in obtained ISCO-08 skill level
+    6. Count missing values in obtained ISCO-08 skill level
     7. Convert year of finish (b_q01c2) to float
     8. Creating a variable for the year when higher education decision was supposedly made
     9. Creating a variable for country specific decision year bins
@@ -300,7 +300,7 @@ def education(piaac_df, log_df):
     log_df = utility.log(log_df, log_record)
     piaac_df['b_q01a'] = pd.to_numeric(piaac_df['b_q01a'], errors='coerce')
     
-    # check and drop for missing values in ISCED
+    # count missing values in ISCED
     var = 'b_q01a'
     log_record = 'missing values cleaning skipped for ' + var
     log_df = utility.log(log_df, log_record)
@@ -333,7 +333,7 @@ def education(piaac_df, log_df):
     log_df = utility.log(log_df, log_record)
     piaac_df['isco08_sl_o'] = pd.to_numeric(piaac_df['isco08_sl_o'], errors='coerce')
     
-    # check and drop for missing values in obtained skill level (don't)
+    # count missing values in obtained skill level
     var = 'isco08_sl_o'
     log_record = 'missing values cleaning skipped for ' + var
     log_df = utility.log(log_df, log_record)
