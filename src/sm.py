@@ -1,56 +1,60 @@
+"""
+Functions computing skill mismatch measures.
+
+Functions:
+----------
+
+dsa(piaac_df, log_df)
+    Measure skill mismatch using direct self-assessment.
+    last update: 24/01/2025
+
+pf_thresholds(piaac_df, occ_variable, skill_variable, dsa_relaxed, l_quantile, h_quantile, log_df)
+    Create Pellizzari and Fichen skill mismatch classification thresholds.
+    last update: 24/01/2025
+
+pf(piaac_df, skill_var, precision, dsa_relaxed, log_df)
+    Measure skill mismatch using Pellizzari and Fichen (2017) method.
+    last update: 24/01/2025
+
+alv(piaac_df, skill_var, precision, log_df)
+    Measure skill mismatch using Allen et al. (2013) method.
+    last update: 24/01/2025
+"""
+
 import pandas as pd
 import numpy as np
 import math
 from src import utility
 from src import clean
-from src import prep
-
-"""
-LAST REVISED: 06.03.24
-
-dsa(piaac_df):
-    - create variable for not challenged enough (notchal)
-    - create variable for feeling need in training (needtrain)
-    - creating variable for DSA skill mismatch (dsa)
-    
-pf_thresholds(piaac_df, occ_variable, skill_variable, l_quantile, h_quantile):
-    - create variable for Pellizzari and Fichen skill mismatch lower threshold:
-      for each occupation group
-        * identify the lower quantile in the distribution of skill of the workers who 
-          are neither not challenged enough nor feel need in additional training
-        * append occupation group to the list of conditions
-        * append the lower quantile to the list values
-        * create the variable using conditions and values 
-    - create variable for Pellizzari and Fichen skill mismatch higher threshold:
-      for each occupation group
-        * identify the higher quantile in the distribution of skill of the workers who 
-          are neither not challenged enough nor feel need in additional training
-        * append occupation group to the list of conditions
-        * append the lower quantile to the list values
-        * create the variable using conditions and values 
-        
-alv(piaac_df, skill_var, precision, log_df):
-    COMMENT NEEDED real soon
-
-THE FOLLOWING COMMENTS NEED TO BE UPDATED
-pf_lit(piaac_df, precision):
-    - create variable for the average of literacy plausible values (lit)
-    - create literacy skill mismatch thresholds using pf_thresholds()
-    - create variable for literacy skill mismatch (pf_lit)
-
-pf_num(piaac_df, precision):
-    - create variable for the average of numeracy plausible values (num)
-    - create numeracy skill mismatch thresholds using pf_thresholds()
-    - create variable for numeracy skill mismatch (pf_num)
-
-pf_psl(piaac_df, precision):
-    - create variable for the average of problem-solving plausible values (psl)
-      note: unlike for literacy and numeracy, for problem-solving, missing values are not removed
-    - create problem-solving skill mismatch thresholds using pf_thresholds()
-    - create variable for problem-solving skill mismatch (pf_psl)
-"""
 
 def dsa(piaac_df, log_df):
+
+    """
+    Measure skill mismatch using direct self-assessment.
+
+    Parameters:
+    ----------
+    piaac_df: DataFrame
+        PIAAC dataset
+    log_df: DataFrame
+        log DataFrame
+
+    Returns:
+    -------
+    piaac_df: DataFrame
+        updated PIAAC dataset
+    log_df: DataFrame
+        updated log DataFrame
+
+    Description:
+    ------------
+    1. Check and drop for missing values in f_q07a
+    2. Create variable for being not challenged enough (notchal)
+    3. Check and drop for missing values in f_q07b
+    4. Create variable for feeling need in training (needtrain)
+    5. Create variable for DSA skill mismatch (dsa)
+    6. Create variable for "relaxed" DSA skill mismatch (dsa_relaxed)
+    """
 
     # converting f_q07a to float
     log_record = 'converting [f_q07a] to float'
@@ -135,6 +139,48 @@ def dsa(piaac_df, log_df):
 
 
 def pf_thresholds(piaac_df, occ_variable, skill_variable, dsa_relaxed, l_quantile, h_quantile, log_df):
+
+    """
+    Create Pellizzari and Fichen skill mismatch classification thresholds.
+
+    Parameters:
+    ----------
+    piaac_df: DataFrame
+        PIAAC dataset
+    occ_variable: str
+        occupation variable
+    skill_variable: str
+        skill variable
+    dsa_relaxed: bool
+        relaxed DSA flag. If True, use relaxed DSA instead of regular DSA
+    l_quantile: float
+        quantile for the lower threshold
+    h_quantile: float
+        quantile for the higher threshold
+    log_df: DataFrame
+        log DataFrame
+
+    Returns:
+    -------
+    piaac_df: DataFrame
+        updated PIAAC dataset
+    log_df: DataFrame
+        updated log DataFrame
+
+    Description:
+    ------------
+    1. For each occupation group, identify the lower quantile in the distribution of skill of the workers who 
+       are neither not challenged enough nor feel need in additional training
+    2. Append occupation group to the list of conditions
+    3. Append the lower quantile to the list values
+    4. Create the variable using conditions and values
+    5. For each occupation group, identify the higher quantile in the distribution of skill of the workers who
+         are neither not challenged enough nor feel need in additional training
+    6. Append occupation group to the list of conditions
+    7. Append the higher quantile to the list values
+    8. Create the variable using conditions and values
+    9. Check and drop for missing values in mismatch thresholds
+    """
     
     if dsa_relaxed == True:
         dsa_var = 'dsa_relaxed'
@@ -160,7 +206,7 @@ def pf_thresholds(piaac_df, occ_variable, skill_variable, dsa_relaxed, l_quantil
         values.append(sm_max)
     piaac_df[dsa_var + '_' + skill_variable + '_max'] = np.select(conditions, values, default=math.nan)
     
-    # check and drop for missing values in mismatch thresholds (don't)
+    # check and drop for missing values in mismatch thresholds
     var = dsa_var + '_' + skill_variable + '_max'
     log_record = 'missing values cleaning skipped for ' + var
     log_df = utility.log(log_df, log_record)
@@ -176,6 +222,39 @@ def pf_thresholds(piaac_df, occ_variable, skill_variable, dsa_relaxed, l_quantil
     return piaac_df, log_df
 
 def pf(piaac_df, skill_var, precision, dsa_relaxed, log_df):
+
+    """
+    Measure skill mismatch using Pellizzari and Fichen (2017) method.
+
+    Parameters:
+    ----------
+    piaac_df: DataFrame
+        PIAAC dataset
+    skill_var: str
+        skill variable
+    precision: float
+        precision level for the skill mismatch thresholds, 
+        e.g. if precision = 0.1, the thresholds will be set at the 0.1 and 0.9 quantiles
+    dsa_relaxed: bool
+        relaxed DSA flag. If True, use relaxed DSA instead of regular DSA
+    log_df: DataFrame
+        log DataFrame
+
+    Returns:
+    -------
+    piaac_df: DataFrame
+        updated PIAAC dataset
+    log_df: DataFrame
+        updated log DataFrame
+
+    Description:
+    ------------
+    1. Create variable for the average of plausible values of the skill variable
+    2. Convert the skill variable to float, check and drop for missing values
+    3. Create skill mismatch thresholds using pf_thresholds()
+    4. Create variable for skill mismatch
+    5. Check and drop for missing values in skill mismatch
+    """
 
     # creating variable for the average of plausible values
     log_record = 'creating [' + skill_var + ']: variable for the average of literacy plausible values'
@@ -232,7 +311,7 @@ def pf(piaac_df, skill_var, precision, dsa_relaxed, log_df):
         1]
     piaac_df[mismatch_var] = np.select(conditions, values, default=math.nan)
     
-    # check and drop for missing values in [mismatch_var] (don't)
+    # check and drop for missing values in [mismatch_var]
     var = mismatch_var
     log_record = 'missing values cleaning skipped for [' + var + ']'
     log_df = utility.log(log_df, log_record)
@@ -242,6 +321,37 @@ def pf(piaac_df, skill_var, precision, dsa_relaxed, log_df):
     return piaac_df, log_df
 
 def alv(piaac_df, skill_var, precision, log_df):
+
+    """
+    Measure skill mismatch using Allen et al. (2013) method.
+
+    Parameters:
+    ----------
+    piaac_df: DataFrame
+        PIAAC dataset
+    skill_var: str
+        skill variable
+    precision: float
+        precision level for the skill mismatch thresholds,
+        e.g. if precision = 1.5, the thresholds will be set at the 1.5 and -1.5 z-scores
+    log_df: DataFrame
+        log DataFrame
+
+    Returns:
+    -------
+    piaac_df: DataFrame
+        updated PIAAC dataset
+    log_df: DataFrame
+        updated log DataFrame
+
+    Description:
+    ------------
+    1. Create variable for the average of plausible values of the skill variable
+    2. Convert the skill variable to float, check and drop for missing values
+    3. Create and standardise aggregate skill use variable  
+    4. Create Allen-Levels-van-der-Velden skill mismatch variable
+    5. Check and drop for missing values in alv skill mismatch
+    """
 
     # creating variable for the average of plausible values
     log_record = 'creating [' + skill_var + ']: variable for the average of literacy plausible values'
@@ -262,7 +372,7 @@ def alv(piaac_df, skill_var, precision, log_df):
     log_df = utility.log(log_df, log_record)
     piaac_df[skill_var] = pd.to_numeric(piaac_df[skill_var], errors='coerce')
 
-    # check and drop for missing values in [skill_var] (don't)
+    # check and drop for missing values in [skill_var]
     var = skill_var
     log_record = 'missing values cleaning skipped for [' + var + ']'
     log_df = utility.log(log_df, log_record)
@@ -446,141 +556,3 @@ def alv(piaac_df, skill_var, precision, log_df):
         log_record = (str(piaac_df.shape[0] - piaac_df[var].isnull().value_counts()[
             False]) + ' observations have the value of nan for [' + var + ']')
         log_df = utility.log(log_df, log_record)
-
-"""
-def pf_lit(piaac_df, precision, dsa_relaxed, log_df):
-
-    # creating variable for the average of literacy plausible values
-    log_record = 'creating [lit]: variable for the average of literacy plausible values'
-    log_df = utility.log(log_df, log_record)
-    piaac_df['lit'] = 0.1 * (piaac_df['pvlit1'] + piaac_df['pvlit2'] + piaac_df['pvlit3'] + piaac_df['pvlit4'] + piaac_df['pvlit5'] + piaac_df['pvlit6'] +piaac_df['pvlit7'] +piaac_df['pvlit8'] +piaac_df['pvlit9'] +piaac_df['pvlit10'])
-
-    # converting lit to float
-    log_record = 'converting [lit] to float'
-    log_df = utility.log(log_df, log_record)
-    piaac_df['lit'] = pd.to_numeric(piaac_df['lit'], errors='coerce')
-
-    # check and drop for missing values in lit
-    log_record = 'check and drop for missing values in [lit]'
-    log_df = utility.log(log_df, log_record)
-    piaac_df, log_df = clean.drop_nan(piaac_df, 'lit', log_df)
-
-    # creating literacy skill mismatch thresholds
-    if dsa_relaxed == True:
-        log_record = 'creating literacy skill mismatch thresholds, [dsa_relaxed] = True'
-        log_df = utility.log(log_df, log_record)
-        piaac_df, log_df = pf_thresholds(piaac_df, 'cntry_isco_lbl', 'lit', True, precision, 1-precision, log_df)
-    else:
-        log_record = 'creating literacy skill mismatch thresholds, [dsa_relaxed] = False'
-        log_df = utility.log(log_df, log_record)
-        piaac_df, log_df = pf_thresholds(piaac_df, 'cntry_isco_lbl', 'lit', False, precision, 1-precision, log_df)
-
-    # creating variable for literacy skill mismatch
-    log_record = 'creating [pf_lit_' + str(precision).replace('.', '') + ']: variable for literacy skill mismatch'
-    log_df = utility.log(log_df, log_record)
-    conditions = [
-        (piaac_df['lit'] < piaac_df['lit_min']),
-        ((piaac_df['lit'] < piaac_df['lit_max']) & (piaac_df['lit'] >= piaac_df['lit_min'])),
-        (piaac_df['lit'] >= piaac_df['lit_max'])]
-    values = [
-        -1,
-        0,
-        1]
-    piaac_df['pf_lit_' + str(precision).replace('.', '')] = np.select(conditions, values, default=math.nan)
-    
-    # check and drop for missing values in literacy skill mismatch
-    log_record = 'check and drop for missing values in [pf_lit_' + str(precision).replace('.', '') + ']'
-    log_df = utility.log(log_df, log_record)
-    piaac_df, log_df = clean.drop_nan(piaac_df, 'pf_lit_' + str(precision).replace('.', ''), log_df)
-    
-    return piaac_df, log_df
-
-
-def pf_num(piaac_df, precision, log_df):
-
-    # creating variable for the average of numeracy plausible values
-    log_record = 'creating [num]: variable for the average of numeracy plausible values'
-    log_df = utility.log(log_df, log_record)
-    piaac_df['num'] = 0.1 * (
-                piaac_df['pvnum1'] + piaac_df['pvnum2'] + piaac_df['pvnum3'] + piaac_df['pvnum4'] + piaac_df['pvnum5'] + piaac_df[
-            'pvnum6'] + piaac_df['pvnum7'] + piaac_df['pvnum8'] + piaac_df['pvnum9'] + piaac_df['pvnum10'])
-
-    # converting num to float
-    log_record = 'converting [num] to float'
-    log_df = utility.log(log_df, log_record)
-    piaac_df['num'] = pd.to_numeric(piaac_df['num'], errors='coerce')
-
-    # check and drop for missing values in num
-    log_record = 'check and drop for missing values in [num]'
-    log_df = utility.log(log_df, log_record)
-    piaac_df, log_df = clean.drop_nan(piaac_df, 'num', log_df)
-
-    # creating numeracy skill mismatch thresholds
-    log_record = 'creating numeracy skill mismatch thresholds'
-    log_df = utility.log(log_df, log_record)
-    piaac_df, log_df = pf_thresholds(piaac_df, 'cntry_isco_lbl', 'num', precision, 1-precision, log_df)
-
-    # creating variable for numeracy skill mismatch
-    log_record = 'creating [pf_num_' + str(precision).replace('.', '') + ']: variable for numeracy skill mismatch'
-    log_df = utility.log(log_df, log_record)
-    conditions = [
-        (piaac_df['num'] < piaac_df['num_min']),
-        ((piaac_df['num'] < piaac_df['num_max']) & (piaac_df['num'] >= piaac_df['num_min'])),
-        (piaac_df['num'] >= piaac_df['num_max'])]
-    values = [
-        -1,
-        0,
-        1]
-    piaac_df['pf_num_' + str(precision).replace('.', '')] = np.select(conditions, values, default=math.nan)
-    
-    # check and drop for missing values in numeracy skill mismatch
-    log_record = 'check and drop for missing values in [pf_num_' + str(precision).replace('.', '') + ']'
-    log_df = utility.log(log_df, log_record)
-    piaac_df, log_df = clean.drop_nan(piaac_df, 'pf_num_' + str(precision).replace('.', ''), log_df)
-    
-    return piaac_df, log_df
-
-
-
-def pf_psl(piaac_df, precision, log_df):
-
-
-    # creating variable for the average of problem-solving plausible values
-    log_record = 'creating [psl]: variable for the average of problem-solving plausible values'
-    log_df = utility.log(log_df, log_record)
-    piaac_df['psl'] = 0.1 * (
-                piaac_df['pvpsl1'] + piaac_df['pvpsl2'] + piaac_df['pvpsl3'] + piaac_df['pvpsl4'] + piaac_df['pvpsl5'] + piaac_df[
-            'pvpsl6'] + piaac_df['pvpsl7'] + piaac_df['pvpsl8'] + piaac_df['pvpsl9'] + piaac_df['pvpsl10'])
-
-    # converting psl to float
-    log_record = 'converting [psl] to float'
-    log_df = utility.log(log_df, log_record)
-    piaac_df['psl'] = pd.to_numeric(piaac_df['psl'], errors='coerce')
-
-    # creating problem-solving skill mismatch thresholds
-    log_record = 'creating problem-solving skill mismatch thresholds'
-    log_df = utility.log(log_df, log_record)
-    piaac_df, log_df = pf_thresholds(piaac_df, 'cntry_isco_lbl', 'psl', precision, 1-precision, log_df)
-
-    # creating variable for problem-solving skill mismatch
-    log_record = 'creating [pf_psl_' + str(precision).replace('.', '') + ']: variable for problem-solving skill mismatch'
-    log_df = utility.log(log_df, log_record)
-    conditions = [
-        (piaac_df['psl'] < piaac_df['psl_min']),
-        ((piaac_df['psl'] < piaac_df['psl_max']) & (piaac_df['psl'] >= piaac_df['psl_min'])),
-        (piaac_df['psl'] >= piaac_df['psl_max'])]
-    values = [
-        -1,
-        0,
-        1]
-    piaac_df['pf_psl_' + str(precision).replace('.', '')] = np.select(conditions, values, default=math.nan)
-    
-    var = 'pf_psl_' + str(precision).replace('.', '')
-    log_record = 'missing values cleaning skipped for ' + var
-    log_df = utility.log(log_df, log_record)
-    log_record = (str(piaac_df.shape[0] - piaac_df[var].isnull().value_counts()[False]) + ' observations have the value of nan for ' + var)
-    log_df = utility.log(log_df, log_record)
-    
-    return piaac_df, log_df
-
-"""

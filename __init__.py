@@ -1,7 +1,10 @@
 """
 Labout Mismatch Toolbox for PIAAC
 
-This package provides a set of functions to clean, prepare, and analyze the PIAAC data for the purpose of studying labor market mismatch.
+This package provides a set of functions to clean, prepare, 
+and analyze the PIAAC data for the purpose of studying labor mismatch.
+For the desription of the measures, please refer to Section 3: Labour 
+Mismatch Measurement Frameworks in [1].
 
 Modules
 --------
@@ -17,6 +20,17 @@ clean
 isco
     Clean existing and create additional occupation and education variables based on ISCO-08.
     last update: 23/01/2025
+
+sm
+    Functions computing skill mismatch measures.
+    last update: 24/01/2025
+
+References
+----------
+
+[1] Iakovlev, V. (2024). Skill vs. education types of labour mismatch and 
+    their association with earnings (No. 2024-12). Accountancy, Economics, 
+    and Finance Working Papers.
 
 author: Vsevolod Iakovlev
 email: vsevolod.v.iakovlev@gmail.com
