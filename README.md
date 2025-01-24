@@ -2,7 +2,7 @@
 
 [Measures](#measures) | [Usage](#to-use-the-module) | [Codebook](#codebook) | [References](#references)
 
-![figure](./figures/toolbox_mrs.png)
+![figure](./figures/toolbox_logo.png)
 
 This package provides a set of functions designed to compute education 
 and skill mismatch using data from the 1st Cycle of the Survey of Adult 
