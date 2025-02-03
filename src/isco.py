@@ -15,8 +15,8 @@ education(piaac_df, log_df)
 
 import pandas as pd
 import numpy as np
-from src import utilities
-from src import clean
+from mismatch_toolbox.src import utilities
+from mismatch_toolbox.src import clean
 
 def occupations(piaac_df, log_df):
 
@@ -98,7 +98,7 @@ def occupations(piaac_df, log_df):
         'Plant and machine operators, and assemblers',
         'Elementary occupations',
         'Armed forces occupations']
-    piaac_df['isco1c_lbl'] = np.select(conditions, values, default=float('nan'))
+    piaac_df['isco1c_lbl'] = np.select(conditions, values, default='nan')
 
     # creating occupation group label variable for 2-digit groups
     log_record = 'creating occupation group label variable for 2-digit groups'
@@ -191,7 +191,7 @@ def occupations(piaac_df, log_df):
         'Commissioned armed forces officers',
         'Non-commissioned armed forces officers',
         'Armed forces occupations, other ranks']
-    piaac_df['isco2c_lbl'] = np.select(conditions, values, default=float('nan'))
+    piaac_df['isco2c_lbl'] = np.select(conditions, values, default='nan')
 
     # creating major custom occupation groups based on ISCO-08 required skill level
     log_record = 'creating major custom occupation groups based on ISCO-08 required skill level'
@@ -228,7 +228,7 @@ def occupations(piaac_df, log_df):
         'High skilled armed forces occupations',
         'Medium skilled armed forces occupations',
         'Low skilled armed forces occupations']
-    piaac_df['isco_lbl'] = np.select(conditions, values, default=float('nan'))
+    piaac_df['isco_lbl'] = np.select(conditions, values, default='nan')
 
     # check and drop for custom occupation groups
     log_record = 'check and drop for custom occupation groups'

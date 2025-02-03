@@ -8,7 +8,7 @@ formatFloat(fmt, val)
     Convert a float to a string with a specified format.
     last updated: 03/02/2025
 
-shares_heatmap(piaac_df, measures_list, measures_labels, cluster, feature, title, y_labels, x_labels, colorbar, numbers, nan_present, size, vertical, filename, display, save)
+shares_heatmap(piaac_df, measures_list, measures_labels, group_var, sort_by, title, y_labels, x_labels, colorbar, numbers, nan_present, size, vertical, filename, display, save)
     Plot a heatmap of the mismatch shares.
     last updated: 03/02/2025
 
@@ -20,7 +20,8 @@ corr_heat_map(piaac_df, corr_type, measures_list, measures_labels, country, titl
 import numpy as np
 import matplotlib.pyplot as plt
 
-from src import utilities
+from mismatch_toolbox.src import utilities
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 def formatFloat(fmt, val):
   
@@ -54,7 +55,22 @@ def formatFloat(fmt, val):
     return "-" + ret[2:]
   return ret
 
-def shares_heatmap(piaac_df, measures_list, measures_labels, cluster, feature, title, y_labels, x_labels, colorbar, numbers, nan_present, size, vertical, filename, display, save):
+def shares_heatmap(piaac_df, 
+                   measures_list, 
+                   measures_labels, 
+                   group_var, 
+                   sort_by, 
+                   title, 
+                   y_labels, 
+                   x_labels, 
+                   colorbar = True, 
+                   numbers = True, 
+                   nan_present = True, 
+                   size = (5, 15), 
+                   vertical = True, 
+                   filename = 'shares_heatmap', 
+                   display = True, 
+                   save = True):
 
     """
     Plot a heatmap of the mismatch shares.
@@ -67,10 +83,10 @@ def shares_heatmap(piaac_df, measures_list, measures_labels, cluster, feature, t
         A list of the mismatch measures variable names.
     measures_labels : list
         A list of the labels for the mismatch measures.
-    cluster : str
+    group_var : str
         A variable name identifying the group level.
-    feature : str
-        A variable name across which the mismatch shares are plotted.
+    sort_by : str
+        A variable name used to sort the mismatch shares
     title : str
         A title of the heatmap.
     y_labels : bool
@@ -78,21 +94,21 @@ def shares_heatmap(piaac_df, measures_list, measures_labels, cluster, feature, t
     x_labels : bool
         A boolean indicating whether to display x-axis labels.
     colorbar : bool
-        A boolean indicating whether to display a colorbar.
+        A boolean indicating whether to display a colorbar. Default is True.
     numbers : bool
-        A boolean indicating whether to display numbers in the heatmap.
+        A boolean indicating whether to display numbers in the heatmap. Default is True.
     nan_present : bool
-        A boolean indicating whether NaN values are present in the data.
+        A boolean indicating whether NaN values are present in the data. Default is True.
     size : tuple
-        A size of the heatmap.
+        A size of the heatmap. Default is (5, 15).
     vertical : bool
-        A boolean indicating whether to plot the heatmap vertically.
+        A boolean indicating whether to plot the heatmap vertically. Default is True.
     filename : str
-        A filename to save the heatmap.
+        A filename to save the heatmap. Default is 'shares_heatmap'.
     display : bool
-        A boolean indicating whether to display the plot.
+        A boolean indicating whether to display the plot. Default is True.
     save : bool
-        A boolean indicating whether to save the plot.
+        A boolean indicating whether to save the plot. Default is True.
 
     Returns:
     -------
@@ -106,22 +122,22 @@ def shares_heatmap(piaac_df, measures_list, measures_labels, cluster, feature, t
     # define the x-axis by the labels of specified measures
     x = measures_labels
 
-    # define the y-axis by the median of specified feature for specified cluster level
-    y = piaac_df[[cluster, feature]].groupby(by=[cluster]).median().round(decimals=2).sort_values(feature, ascending=False).reset_index(level=0).to_numpy().tolist()
+    # define the y-axis by the median of specified sort_by for specified group_var level
+    y = piaac_df[[group_var, sort_by]].groupby(by=[group_var]).median().round(decimals=2).sort_values(sort_by, ascending=False).reset_index(level=0).to_numpy().tolist()
     y_new = []
     for i in y:
         y_new += [i[0]]
     y = y_new
 
-    heatmap_data = np.empty((len(piaac_df[cluster].value_counts()), 1))
+    heatmap_data = np.empty((len(piaac_df[group_var].value_counts()), 1))
     for measure in measures_list:
         heatmap_data = np.append(heatmap_data, np.delete(np.array(
-            piaac_df[[cluster, feature, measure]].groupby(by=[cluster]).median().sort_values(feature, ascending=False)),
+            piaac_df[[group_var, sort_by, measure]].groupby(by=[group_var]).median().sort_values(sort_by, ascending=False)),
                                                          0, 1), axis=1)
     heatmap_data = np.delete(heatmap_data, 0, 1)
     heatmap_data = np.around(heatmap_data, decimals=2)
     
-    if vertical == True:
+    if vertical == False:
         heatmap_data = heatmap_data.T
         x_old = x
         y_old = y
@@ -144,13 +160,15 @@ def shares_heatmap(piaac_df, measures_list, measures_labels, cluster, feature, t
 
     if colorbar == True:
         # Create colorbar
-        cbar = ax.figure.colorbar(im, ax=ax, location="left", aspect=60, pad=0.005)
-        cbar.ax.tick_params(axis='y', labelsize=14, labelrotation = 0)
+        divider = make_axes_locatable(ax)
+        cax = divider.append_axes("left", size="5%", pad=0.1)
+        cbar = fig.colorbar(im, cax=cax)
+        cbar.ax.yaxis.set_label_position('left')
+        cbar.ax.yaxis.tick_left()
+        cbar.ax.tick_params(axis='y', labelsize=14, labelrotation=0)
         cbar.ax.set_ylabel("Share", fontsize=18, rotation=90)
     else:
-        # Create colorbar
-        cbar = ax.figure.colorbar(im, ax=ax, location="left", aspect=60, pad=0.005)
-        cbar.ax.tick_params(axis='y', labelsize=14, labelrotation = 0)
+        pass
 
     # Show all ticks and label them with the respective list entries
     if x_labels == True:
@@ -205,9 +223,18 @@ def shares_heatmap(piaac_df, measures_list, measures_labels, cluster, feature, t
     
 
 
-def corr_heat_map(piaac_df, corr_type, measures_list, measures_labels, country, title, x_labels, y_labels, size, filename, display, save):
-    
-    plt.close('all')
+def corr_heat_map(piaac_df, 
+                  corr_type, 
+                  measures_list, 
+                  measures_labels, 
+                  country, 
+                  title, 
+                  x_labels, 
+                  y_labels, 
+                  size = (5, 5), 
+                  filename = 'corr_heatmap', 
+                  display = True, 
+                  save = True):
 
     """
     Plot a heatmap of the correlation matrix.
@@ -231,19 +258,23 @@ def corr_heat_map(piaac_df, corr_type, measures_list, measures_labels, country, 
     y_labels : bool
         A boolean indicating whether to display y-axis labels.
     size : tuple
-        A size of the heatmap.
+        A size of the heatmap. Default is (5, 5).
     filename : str
-        A filename to save the heatmap.
+        A filename to save the heatmap. Default is 'corr_heatmap'.
     display : bool
-        A boolean indicating whether to display the plot.
+        A boolean indicating whether to display the plot. Default is True.
     save : bool
-        A boolean indicating whether to save the plot.
+        A boolean indicating whether to save the plot. Default is True.
 
     Returns:
     -------
     plt
         A plot of the heatmap.
     """
+
+    plt.close('all')
+
+    fontsize = max(size) * 2
 
     x = measures_labels
     y = measures_labels
@@ -270,9 +301,11 @@ def corr_heat_map(piaac_df, corr_type, measures_list, measures_labels, country, 
     im = ax.imshow(heatmap_data, cmap='Greys')
     
     # Create colorbar
-    cbar = ax.figure.colorbar(im, ax=ax, location="right", aspect=30, pad=0.005, shrink=0.67)
-    cbar.ax.tick_params(axis='y', labelsize=14, labelrotation = 0)
-    cbar.ax.set_ylabel(bar_label, fontsize=18, rotation=90)
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", size="5%", pad=0.1)
+    cbar = fig.colorbar(im, cax=cax)
+    cbar.ax.tick_params(axis='y', labelsize=fontsize, labelrotation = 0)
+    cbar.ax.set_ylabel(bar_label, fontsize=fontsize, rotation=90)
     
     # Show all ticks and label them with the respective list entries
     if x_labels == True:
@@ -284,8 +317,8 @@ def corr_heat_map(piaac_df, corr_type, measures_list, measures_labels, country, 
     else:
         ax.set_yticks(np.arange(len(y)), labels=[])
         
-    ax.tick_params(axis='y', labelsize=14)
-    ax.tick_params(axis='x', labelsize=14)
+    ax.tick_params(axis='y', labelsize=fontsize)
+    ax.tick_params(axis='x', labelsize=fontsize)
 
     # Turn spines off and create white grid.
     ax.spines[:].set_visible(False)
@@ -305,9 +338,9 @@ def corr_heat_map(piaac_df, corr_type, measures_list, measures_labels, country, 
         for j in range(len(x)):
             text = ax.text(j, i, formatFloat("%.2f", heatmap_data[i, j]), ha="center", va="center",
                            color=textcolors[int(im.norm(heatmap_data[i, j]) > threshold)],
-                           fontsize=14, rotation=0)
+                           fontsize=fontsize, rotation=0)
 
-    ax.set_title(title, fontsize=22, rotation='horizontal', ha='center')
+    ax.set_title(title, fontsize=fontsize*1.5, rotation='horizontal', ha='center')
     fig.tight_layout()
     
     if save == True:

@@ -16,7 +16,7 @@ preparation(piaac_df, log_df)
     Prepare the dataset for analysis.
     last update: 23/01/2025
 """
-from src import utilities
+from mismatch_toolbox.src import utilities
 import pandas as pd
 import numpy as np
 
@@ -272,7 +272,7 @@ def preparation(piaac_df, log_df):
         'United Kingdom',
         'Turkey',
         'Canada']
-    piaac_df['cntryname'] = np.select(conditions, values, default=float('nan'))
+    piaac_df['cntryname'] = np.select(conditions, values, default='nan')
 
     # create a variable with country codes
     log_record = 'creating [cntrycode]: variable for country codes'
@@ -349,7 +349,7 @@ def preparation(piaac_df, log_df):
         'GBR',
         'TUR',
         'CAN']
-    piaac_df['cntrycode'] = np.select(conditions, values, default=float('nan'))
+    piaac_df['cntrycode'] = np.select(conditions, values, default='nan')
 
     # check and drop for missing values in country ID
     log_record = 'check and drop for missing values in country ID'

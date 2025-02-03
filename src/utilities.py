@@ -16,7 +16,7 @@ print_tab(df)
     Print a dataframe in a tabular format.
     last update: 22/01/2025
     
-mismatch_shares(piaac_df, mismatch_variable, feature)
+mismatch_shares(piaac_df, mismatch_variable, feature, log_df)
     Compute mismatch shares within each group.
     last update: 22/01/2025
 
