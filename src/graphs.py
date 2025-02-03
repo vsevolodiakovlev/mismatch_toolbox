@@ -1,23 +1,26 @@
 """
+Labour mismatch data visualisation functions.
 
+Functions:
+----------
+
+formatFloat(fmt, val)
+    Convert a float to a string with a specified format.
+    last updated: 03/02/2025
+
+shares_heatmap(piaac_df, measures_list, measures_labels, cluster, feature, title, y_labels, x_labels, colorbar, numbers, nan_present, size, vertical, filename, display, save)
+    Plot a heatmap of the mismatch shares.
+    last updated: 03/02/2025
+
+corr_heat_map(piaac_df, corr_type, measures_list, measures_labels, country, title, x_labels, y_labels, size, filename, display, save)
+    Plot a heatmap of the correlation matrix.
+    last updated: 03/02/2025
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
 
 from src import utilities
-
-"""
-LAST REVISED: 09.04.23
-
-plot_eddecyr_wellshare(piaac_df, year_start, year_finish, country):
-    - draw a graph of the share of well-matched workers as defined by RM-mode, JA,
-    
-shares_heatmap(piaac_df, measures_list, measures_labels, cluster, feature, title, 
-                title_y_shift, size, filename, y_labels, x_labels, colorbar, numbers):
-    - draw a heatmap of the shares of well, over and under-matched workers for the specified
-      measures across 
-"""
 
 def formatFloat(fmt, val):
   
@@ -51,8 +54,7 @@ def formatFloat(fmt, val):
     return "-" + ret[2:]
   return ret
 
-def shares_heatmap(piaac_df, measures_list, measures_labels, cluster, feature, title, size, filename, y_labels,
-                    x_labels, colorbar, numbers, nan_present):
+def shares_heatmap(piaac_df, measures_list, measures_labels, cluster, feature, title, y_labels, x_labels, colorbar, numbers, nan_present, size, vertical, filename, display, save):
 
     """
     Plot a heatmap of the mismatch shares.
@@ -71,10 +73,6 @@ def shares_heatmap(piaac_df, measures_list, measures_labels, cluster, feature, t
         A variable name across which the mismatch shares are plotted.
     title : str
         A title of the heatmap.
-    size : tuple
-        A size of the heatmap.
-    filename : str
-        A filename to save the heatmap.
     y_labels : bool
         A boolean indicating whether to display y-axis labels.
     x_labels : bool
@@ -85,10 +83,21 @@ def shares_heatmap(piaac_df, measures_list, measures_labels, cluster, feature, t
         A boolean indicating whether to display numbers in the heatmap.
     nan_present : bool
         A boolean indicating whether NaN values are present in the data.
+    size : tuple
+        A size of the heatmap.
+    vertical : bool
+        A boolean indicating whether to plot the heatmap vertically.
+    filename : str
+        A filename to save the heatmap.
+    display : bool
+        A boolean indicating whether to display the plot.
+    save : bool
+        A boolean indicating whether to save the plot.
 
     Returns:
     -------
-    None
+    plt
+        A plot of the heatmap.
     """
 
     # close all open graphs
@@ -112,11 +121,12 @@ def shares_heatmap(piaac_df, measures_list, measures_labels, cluster, feature, t
     heatmap_data = np.delete(heatmap_data, 0, 1)
     heatmap_data = np.around(heatmap_data, decimals=2)
     
-    #heatmap_data = heatmap_data.T
-    #x_old = x
-    #y_old = y
-    #x = y_old
-    #y = x_old
+    if vertical == True:
+        heatmap_data = heatmap_data.T
+        x_old = x
+        y_old = y
+        x = y_old
+        y = x_old
     
     fig = plt.figure(figsize=size)
     ax = fig.subplots()
@@ -185,116 +195,55 @@ def shares_heatmap(piaac_df, measures_list, measures_labels, cluster, feature, t
     ax.set_title(title, fontsize=22, rotation='horizontal', ha='center')
     fig.tight_layout()
     
-    plt.savefig(filename + '.pdf', bbox_inches="tight")
-    plt.show()
+    if save == True:
+        plt.savefig(filename + '.pdf', bbox_inches="tight")
+    
+    if display == True:
+        plt.show()
+
+    return plt
+    
 
 
-def shares_heatmap_slides(piaac_df, measures_list, measures_labels, cluster, feature, title, size, filename, y_labels,
-                    x_labels, colorbar, numbers, nan_present):
-
-    # close all open graphs
+def corr_heat_map(piaac_df, corr_type, measures_list, measures_labels, country, title, x_labels, y_labels, size, filename, display, save):
+    
     plt.close('all')
 
-    # define the x-axis by the labels of specified measures
-    x = measures_labels
+    """
+    Plot a heatmap of the correlation matrix.
 
-    # define the y-axis by the median of specified feature for specified cluster level
-    y = piaac_df[[cluster, feature]].groupby(by=[cluster]).median().round(decimals=2).sort_values(feature, ascending=False).reset_index(level=0).to_numpy().tolist()
-    y_new = []
-    for i in y:
-        y_new += [i[0]]
-    y = y_new
+    Parameters:
+    ----------
+    piaac_df : DataFrame
+        A DataFrame containing the PIAAC data.
+    corr_type : str
+        A type of correlation coefficient: 'matthews' or 'pearson'.
+    measures_list : list
+        A list of the mismatch measures variable names.
+    measures_labels : list
+        A list of the labels for the mismatch measures.
+    country : str
+        A country name or 'all'.
+    title : str
+        A title of the heatmap.
+    x_labels : bool
+        A boolean indicating whether to display x-axis labels.
+    y_labels : bool
+        A boolean indicating whether to display y-axis labels.
+    size : tuple
+        A size of the heatmap.
+    filename : str
+        A filename to save the heatmap.
+    display : bool
+        A boolean indicating whether to display the plot.
+    save : bool
+        A boolean indicating whether to save the plot.
 
-    heatmap_data = np.empty((len(piaac_df[cluster].value_counts()), 1))
-    for measure in measures_list:
-        heatmap_data = np.append(heatmap_data, np.delete(np.array(
-            piaac_df[[cluster, feature, measure]].groupby(by=[cluster]).median().sort_values(feature, ascending=False)),
-                                                         0, 1), axis=1)
-    heatmap_data = np.delete(heatmap_data, 0, 1)
-    heatmap_data = np.around(heatmap_data, decimals=2)
-    
-    heatmap_data = heatmap_data.T
-    x_old = x
-    y_old = y
-    x = y_old
-    y = x_old
-    
-
-    fig = plt.figure(figsize=size)
-    ax = fig.subplots()
-    
-    if nan_present == True:
-        unique_values = np.unique(heatmap_data).tolist()
-        unique_values.sort()
-        min_value = unique_values[1]
-        im = ax.imshow(heatmap_data, cmap='Greys', vmin=min_value)
-    else:
-        im = ax.imshow(heatmap_data, cmap='Greys')
-
-    # colour schemes can be found at
-    # https://matplotlib.org/stable/tutorials/colors/colormaps.html
-
-    if colorbar == True:
-        # Create colorbar
-        cbar = ax.figure.colorbar(im, ax=ax, location="left", aspect=60, pad=0.005)
-        cbar.ax.tick_params(axis='y', labelsize=14, labelrotation = 0)
-        cbar.ax.set_ylabel("Share", fontsize=18, rotation=90)
-    else:
-        # Create colorbar
-        cbar = ax.figure.colorbar(im, ax=ax, location="left", aspect=60, pad=0.005)
-        cbar.ax.tick_params(axis='y', labelsize=14, labelrotation = 0)
-
-    # Show all ticks and label them with the respective list entries
-    if x_labels == True:
-        ax.set_xticks(np.arange(len(x)), labels=x)
-    else:
-        ax.set_xticks(np.arange(len(x)), labels=[])
-    
-    if y_labels == True:
-        ax.set_ylabel('Countries by median earnings (descending)', fontsize=18, rotation=90)
-        ax.yaxis.set_label_position("right")
-        ax.yaxis.tick_right()
-        ax.set_yticks(np.arange(len(y)), labels=y)
-    else:
-        ax.set_yticks(np.arange(len(y)), labels=[])
-
-    ax.tick_params(axis='y', labelsize=14)
-    ax.tick_params(axis='x', labelsize=18)
-
-    # Turn spines off and create white grid.
-    ax.spines[:].set_visible(False)
-    ax.set_xticks(np.arange(heatmap_data.shape[1] + 1) - .5, minor=True)
-    ax.set_yticks(np.arange(heatmap_data.shape[0] + 1) - .5, minor=True)
-    #ax.grid(which="minor", color="w", linestyle='-')
-    ax.tick_params(which="minor", bottom=False, left=False)
-    ax.yaxis.tick_right()
-
-    # Rotate the tick labels and set their alignment.
-    plt.setp(ax.get_xticklabels(), rotation=90, ha="right", va="center", rotation_mode="anchor")
-    #plt.setp(ax.get_yticklabels(), rotation=0, ha="left", va="center", rotation_mode="anchor")
-
-    threshold = im.norm(heatmap_data.max()) / 2.
-    textcolors = ("black", "white")
-
-    # Loop over data dimensions and create text annotations.
-    if numbers == True:
-        for i in range(len(y)):
-            for j in range(len(x)):
-                text = ax.text(j, i, formatFloat("%.2f", heatmap_data[i, j]), ha="center", va="center",
-                               color=textcolors[int(im.norm(heatmap_data[i, j]) > threshold)],
-                               fontsize=14, rotation=0)
-
-    ax.set_title(title, fontsize=22, rotation='horizontal', ha='center')
-    fig.tight_layout()
-    
-    plt.savefig(filename + '.pdf', bbox_inches="tight")
-    plt.show()
-
-    
-
-
-def corr_heat_map(piaac_df, corr_type, measures_list, measures_labels, country, title, size, filename, x_labels, y_labels):
-    plt.close('all')
+    Returns:
+    -------
+    plt
+        A plot of the heatmap.
+    """
 
     x = measures_labels
     y = measures_labels
@@ -361,59 +310,10 @@ def corr_heat_map(piaac_df, corr_type, measures_list, measures_labels, country, 
     ax.set_title(title, fontsize=22, rotation='horizontal', ha='center')
     fig.tight_layout()
     
-    plt.savefig(filename + '.pdf')
-    plt.show()
-
-
-def estimates_heat_map(estimates_matrix, x_labels, y_labels, title, size, filename):
-    plt.close('all')
-
-    x = x_labels
-    y = y_labels
+    if save == True:
+        plt.savefig(filename + '.pdf')
     
-    heatmap_data = np.array(estimates_matrix)
-    bar_label = "Coefficient estimates"
+    if display == True:
+        plt.show()
 
-    
-    fig = plt.figure(figsize=size)
-    ax = fig.subplots()
-    im = ax.imshow(heatmap_data, cmap='Greys')
-    
-    # Create colorbar
-    cbar = ax.figure.colorbar(im, ax=ax, location="right", aspect=30, pad=0.005, shrink=0.67)
-    cbar.ax.tick_params(axis='y', labelsize=14, labelrotation = 0)
-    cbar.ax.set_ylabel(bar_label, fontsize=18, rotation=90)
-    
-    # Show all ticks and label them with the respective list entries
-    ax.set_xticks(np.arange(len(x)), labels=x)
-    ax.set_yticks(np.arange(len(y)), labels=y)
- 
-    ax.tick_params(axis='y', labelsize=14)
-    ax.tick_params(axis='x', labelsize=14)
-
-    # Turn spines off and create white grid.
-    ax.spines[:].set_visible(False)
-    ax.set_xticks(np.arange(heatmap_data.shape[1] + 1) - .5, minor=True)
-    ax.set_yticks(np.arange(heatmap_data.shape[0] + 1) - .5, minor=True)
-    #ax.grid(which="minor", color="w", linestyle='-')
-    ax.tick_params(which="minor", bottom=False, left=False)
-
-    # Rotate the tick labels and set their alignment.
-    plt.setp(ax.get_xticklabels(), rotation=30, ha="right", va="center", rotation_mode="anchor")
-
-    threshold = im.norm(heatmap_data.max()) / 2.
-    textcolors = ("black", "white")
-
-    # Loop over data dimensions and create text annotations.
-    for i in range(len(y)):
-        for j in range(len(x)):
-            text = ax.text(j, i, formatFloat("%.2f", heatmap_data[i, j]), ha="center", va="center",
-                           color=textcolors[int(im.norm(heatmap_data[i, j]) > threshold)],
-                           fontsize=14, rotation=0)
-
-    ax.set_title(title, fontsize=22, rotation='horizontal', ha='center')
-    fig.tight_layout()
-    
-    plt.savefig(filename + '.pdf')
-    plt.show()
-
+    return plt

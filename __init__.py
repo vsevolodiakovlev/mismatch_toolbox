@@ -1,5 +1,5 @@
 """
-Labout Mismatch Toolbox for PIAAC
+Labour Mismatch Toolbox for PIAAC
 
 This package provides a set of functions designed to compute education 
 and skill mismatch using data from the 1st Cycle of the Survey of Adult 
@@ -31,6 +31,10 @@ isco
 sm
     Functions computing skill mismatch measures.
     last update: 24/01/2025
+
+graphs
+    Labour mismatch data visualisation functions.
+    last update: 03/02/2025
 
 References
 ----------
