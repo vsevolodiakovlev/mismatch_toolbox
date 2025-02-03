@@ -16,7 +16,7 @@ preparation(piaac_df, log_df)
     Prepare the dataset for analysis.
     last update: 23/01/2025
 """
-from src import utility
+from src import utilities
 import pandas as pd
 import numpy as np
 
@@ -50,22 +50,22 @@ def drop_nan(df, var, log_df):
         nan = 'nan'
         if (nan in df[var].unique()) == True:
             log_record = (str(df[var].value_counts()[nan]) + ' observations have the value of nan for [' + var + ']')
-            log_df = utility.log(log_df, log_record)
+            log_df = utilities.log(log_df, log_record)
             n_before = df.shape[0]
             cntries_before = df['cntryname'].value_counts()
             cntries_before = cntries_before.rename(var + ': orig')
             log_record = ('n=' + str(n_before))
-            log_df = utility.log(log_df, log_record)
+            log_df = utilities.log(log_df, log_record)
             log_record = ('removing the observations...')
-            log_df = utility.log(log_df, log_record)
+            log_df = utilities.log(log_df, log_record)
             df.drop(df[df[var] == nan].index, inplace=True)
             if (nan in df[var].unique()) == True:
                 log_record = ('It did not work, ' + str(
                     df[var].value_counts()[nan]) + ' observations still have the value of nan for [' + var + ']')
-                log_df = utility.log(log_df, log_record)
+                log_df = utilities.log(log_df, log_record)
                 n_afetr = df.shape[0]
                 log_record = ('n=' + str(n_afetr) + '; ' + str(n_before - n_afetr) + ' observations have been removed')
-                log_df = utility.log(log_df, log_record)
+                log_df = utilities.log(log_df, log_record)
                 cntries_after = df['cntryname'].value_counts()
                 cntries_after = cntries_after.rename(var + ': clnd')
                 cntries_diff = cntries_before - cntries_after
@@ -80,47 +80,47 @@ def drop_nan(df, var, log_df):
                 cntries_diff = cntries_diff.rename(var + ': diff')
         else:
             log_record = ('no observations have the value of nan for [' + var + ']')
-            log_df = utility.log(log_df, log_record)
+            log_df = utilities.log(log_df, log_record)
             log_record = ('n=' + str(df.shape[0]))
-            log_df = utility.log(log_df, log_record)
+            log_df = utilities.log(log_df, log_record)
     else:
         if (df[var].isnull().values.any()) == True:
             log_record = (str(df[var].isnull().value_counts()[True]) + ' observations have the value of nan for [' + var + ']')
-            log_df = utility.log(log_df, log_record)
+            log_df = utilities.log(log_df, log_record)
             n_before = df.shape[0]
             cntries_before = df['cntryname'].value_counts()
             cntries_before = cntries_before.rename(var + ': orig')
             log_record = ('n=' + str(n_before))
-            log_df = utility.log(log_df, log_record)
+            log_df = utilities.log(log_df, log_record)
             log_record = ('removing the observations...')
-            log_df = utility.log(log_df, log_record)
+            log_df = utilities.log(log_df, log_record)
             df.dropna(subset=var, inplace=True)
             if (df[var].isnull().values.any()) == True:
                 log_record = ('It did not work, ' + str(df[var].isnull().value_counts()[
                                                     True]) + ' observations still have the value of nan for [' + var + ']')
-                log_df = utility.log(log_df, log_record)
+                log_df = utilities.log(log_df, log_record)
                 n_afetr = df.shape[0]
                 log_record = ('n=' + str(n_afetr) + '; ' + str(n_before - n_afetr) + ' observations have been removed')
-                log_df = utility.log(log_df, log_record)
+                log_df = utilities.log(log_df, log_record)
                 cntries_after = df['cntryname'].value_counts()
                 cntries_after = cntries_after.rename(var + ': clnd')
                 cntries_diff = cntries_before - cntries_after
                 cntries_diff = cntries_diff.rename(var + ': diff')
             else:
                 log_record = ('no observations have the value of nan for [' + var + ']')
-                log_df = utility.log(log_df, log_record)
+                log_df = utilities.log(log_df, log_record)
                 n_afetr = df.shape[0]
                 log_record = ('n=' + str(n_afetr) + '; ' + str(n_before - n_afetr) + ' observations have been removed')
-                log_df = utility.log(log_df, log_record)
+                log_df = utilities.log(log_df, log_record)
                 cntries_after = df['cntryname'].value_counts()
                 cntries_after = cntries_after.rename(var + ': clnd')
                 cntries_diff = cntries_before - cntries_after
                 cntries_diff = cntries_diff.rename(var + ': diff')
         else:
             log_record = ('no observations have the value of nan for [' + var + ']')
-            log_df = utility.log(log_df, log_record)
+            log_df = utilities.log(log_df, log_record)
             log_record = ('n=' + str(df.shape[0]))
-            log_df = utility.log(log_df, log_record)
+            log_df = utilities.log(log_df, log_record)
     return df, log_df
 
 def drop_val(df, var, values_list, operator, log_df):
@@ -151,9 +151,9 @@ def drop_val(df, var, values_list, operator, log_df):
     
     n_before = df.shape[0]
     log_record = ('n=' + str(n_before))
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     log_record = ('dropping observations with ' + '[' +var + ']' + operator + str(values_list))
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     for value in values_list:
         if operator == '==':
             df.drop(df[df[var] == value].index, inplace=True)
@@ -161,7 +161,7 @@ def drop_val(df, var, values_list, operator, log_df):
             df.drop(df[df[var] != value].index, inplace=True)
     n_after = df.shape[0]
     log_record = 'n=' + str(n_after) + '; ' + str(n_before - n_after) + ' observations have been removed'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     
     return df, log_df
 
@@ -194,12 +194,12 @@ def preparation(piaac_df, log_df):
     
     # converting cntryid to float
     log_record = 'converting cntryid to float'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     piaac_df['cntryid'] = pd.to_numeric(piaac_df['cntryid'], errors='coerce')
 
     # create a variable with country names
     log_record = 'creating [cntryname]: variable for country names'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     conditions = [
         (piaac_df['cntryid'] == 276),
         (piaac_df['cntryid'] == 643),
@@ -276,7 +276,7 @@ def preparation(piaac_df, log_df):
 
     # create a variable with country codes
     log_record = 'creating [cntrycode]: variable for country codes'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     conditions = [
         (piaac_df['cntryid'] == 276),
         (piaac_df['cntryid'] == 643),
@@ -353,36 +353,36 @@ def preparation(piaac_df, log_df):
 
     # check and drop for missing values in country ID
     log_record = 'check and drop for missing values in country ID'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     piaac_df, log_df = drop_nan(piaac_df, 'cntryid', log_df)
 
     # converting c_d05 (employment status) to float
     log_record = 'converting [c_d05] (employment status) to float'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     piaac_df['c_d05'] = pd.to_numeric(piaac_df['c_d05'], errors='coerce')
 
     # drop all respondents who are unemployed or out of the labour force
     log_record = 'drop all respondents who are unemployed or out of the labour force'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     piaac_df, log_df = drop_val(piaac_df, 'c_d05', [1], '!=', log_df)
 
     # generate variable earn as a float of an earnings variable of choice
     log_record = 'creating [earn]: variable earn as a float of an earnings variable of choice'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     piaac_df['earn'] = pd.to_numeric(piaac_df['earnhrbonusppp'], errors='coerce')
 
     # check and drop for missing values in earnings
     log_record = 'check and drop for missing values in earnings'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     piaac_df, log_df = drop_nan(piaac_df, 'earn', log_df)
 
     # trim earningns at the 1st and 99th percentiles
     log_record = 'trim earningns at the 1st and 99th percentiles'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     piaac_df.drop(piaac_df[piaac_df['earn'] < piaac_df['earn'].quantile(0.01)].index, inplace=True)
     piaac_df.drop(piaac_df[piaac_df['earn'] > piaac_df['earn'].quantile(0.99)].index, inplace=True)
     log_record = 'n=' + str(piaac_df.shape[0])
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     
     return piaac_df, log_df
             

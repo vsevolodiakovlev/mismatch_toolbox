@@ -33,7 +33,7 @@ import pandas as pd
 import numpy as np
 import statistics as st
 import math
-from src import utility
+from src import utilities
 
 def mean_sl(piaac_df, occ_variable, mean_name, std_name):
 
@@ -161,12 +161,12 @@ def rm_mean(piaac_df, SDs, log_df):
 
     # calculating country-specific skill level mean and standard deviation
     log_record = 'calculating country-specific skill level mean and standard deviation'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     mean_sl(piaac_df, 'cntry_isco_lbl', 'og_mean_sl', 'og_std_sl')
 
     # creating variable for country-spec mean-based RM mismatch
     log_record = 'creating [rm_mean_' + str(SDs).replace('.', '') +']: variable for country-spec mean-based RM mismatch with ' + str(SDs).replace('.', '') + ' SDs threshold'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     piaac_df['rm_mean_' + str(SDs).replace('.', '')] = 0
     conditions = [
         piaac_df['isco08_sl_o'] >= piaac_df['og_mean_sl'] + SDs * piaac_df['og_std_sl'],
@@ -182,9 +182,9 @@ def rm_mean(piaac_df, SDs, log_df):
     # count missing values in mean-based RM mismatch
     var = 'rm_mean_' + str(SDs).replace('.', '')
     log_record = 'missing values cleaning skipped for [' + var + ']'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     log_record = (str(piaac_df.shape[0] - piaac_df[var].isnull().value_counts()[False]) + ' observations have the value of nan for ' + var)
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     
     return piaac_df, log_df
 
@@ -221,16 +221,16 @@ def rm_mode(piaac_df, SDs, log_df):
 
     # defining function calculating skill level mode and standard deviation
     log_record = 'defining function calculating skill level mode and standard deviation'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     
     # calculating country-specific skill level mode and standard deviation
     log_record = 'calculating country-specific skill level mode and standard deviation'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     mode_sl(piaac_df, 'cntry_isco_lbl', 'og_mode_sl', 'og_std_sl')
 
     # creating variable for country-spec mode-based RM mismatch
     log_record = 'creating [rm_mode_' + str(SDs).replace('.', '') + ']: variable for country-spec mode-based RM mismatch with ' + str(SDs).replace('.', '') + ' SDs threshold'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     piaac_df['rm_mode_' + str(SDs).replace('.', '')] = 0
     conditions = [
         piaac_df['isco08_sl_o'] >= piaac_df['og_mode_sl'] + SDs * piaac_df['og_std_sl'],
@@ -246,9 +246,9 @@ def rm_mode(piaac_df, SDs, log_df):
     # count missing values in mode-based RM mismatch
     var = 'rm_mode_' + str(SDs).replace('.', '')
     log_record = 'missing values cleaning skipped for [' + var + ']'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     log_record = (str(piaac_df.shape[0] - piaac_df[var].isnull().value_counts()[False]) + ' observations have the value of nan for ' + var)
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     
     return piaac_df, log_df
 
@@ -280,7 +280,7 @@ def ja(piaac_df, log_df):
 
     # creating variable for required skill level
     log_record = 'creating [isco08_sl_r]: variable for required skill level'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     conditions = [
         (piaac_df['isco2c'] == 11),
         (piaac_df['isco2c'] == 12),
@@ -317,7 +317,7 @@ def ja(piaac_df, log_df):
 
     # creating variable for JA mismatch
     log_record = 'creating [ja]: variable for JA mismatch'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     conditions = [
         piaac_df['isco08_sl_o'] > piaac_df['isco08_sl_r'],
         piaac_df['isco08_sl_o'] == piaac_df['isco08_sl_r'],
@@ -331,9 +331,9 @@ def ja(piaac_df, log_df):
     # count missing values in JA mismatch
     var = 'ja'
     log_record = 'missing values cleaning skipped for [' + var + ']'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     log_record = (str(piaac_df.shape[0] - piaac_df[var].isnull().value_counts()[False]) + ' observations have the value of nan for ' + var)
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     
     return piaac_df, log_df
 
@@ -370,19 +370,19 @@ def isa(piaac_df, gap, log_df):
 
     # converting self-reported requirement to float
     log_record = 'converting self-reported requirement to float'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     piaac_df['yrsget'] = pd.to_numeric(piaac_df['yrsget'], errors='coerce')
 
     # converting years of education to float
     log_record = 'converting years of education to float'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     piaac_df['yrsqual'] = pd.to_numeric(piaac_df['yrsqual'], errors='coerce')
 
     piaac_df['isa_mismatch'] = piaac_df['yrsqual'] - piaac_df['yrsget']
 
     # creating variable for ISA mismatch
     log_record = 'creating [isa_' + str(gap).replace('.', '') +']: variable for ISA mismatch'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     conditions = [(piaac_df['isa_mismatch'] >= gap),
                   ((piaac_df['isa_mismatch'] < gap) & (piaac_df['isa_mismatch'] >= gap * (-1))),
                   (piaac_df['isa_mismatch'] < gap * (-1))]
@@ -394,9 +394,9 @@ def isa(piaac_df, gap, log_df):
     # count missing values in ISA mismatch
     var = 'isa_' + str(gap).replace('.', '')
     log_record = 'missing values cleaning skipped for [' + var + ']'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     log_record = (str(piaac_df.shape[0] - piaac_df[var].isnull().value_counts()[False]) + ' observations have the value of nan for ' + var)
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     
     return piaac_df, log_df
 

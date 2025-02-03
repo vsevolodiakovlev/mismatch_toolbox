@@ -1,5 +1,5 @@
 """
-A set of utility functions for data processing and analysis. 
+A set of functions for data processing and analysis. 
 
 Functions:
 ----------

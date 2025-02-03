@@ -5,15 +5,15 @@ This package provides a set of functions designed to compute education
 and skill mismatch using data from the 1st Cycle of the Survey of Adult 
 Skills (PIAAC). The currently available measures include job analysis, 
 realised matches, indirect self-assessment, direct self-assessment, 
-Pellizzari-Fichen, and Allen-Levels-Van-der-Velden.For the desription 
+Pellizzari-Fichen, and Allen-Levels-Van-der-Velden.For the description 
 of the measures, please refer to Section 3: Labour Mismatch Measurement 
 Frameworks in [1].
 
 Modules
 --------
 
-utility
-    A set of utility functions for data processing and analysis.
+utilities
+    A set of functions for data processing and analysis.
     last update: 22/01/2025
 
 clean
@@ -48,6 +48,6 @@ from .src import (
     em,
     isco,
     sm,
-    utility,
+    utilities,
     graphs
 )

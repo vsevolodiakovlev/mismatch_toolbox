@@ -15,7 +15,7 @@ education(piaac_df, log_df)
 
 import pandas as pd
 import numpy as np
-from src import utility
+from src import utilities
 from src import clean
 
 def occupations(piaac_df, log_df):
@@ -52,7 +52,7 @@ def occupations(piaac_df, log_df):
 
     # converting isco1c, isco2c, isco1l and isco2l to float
     log_record = 'converting isco1c, isco2c, isco1l and isco2l to float'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     piaac_df['isco1c'] = pd.to_numeric(piaac_df['isco1c'], errors='coerce')
     piaac_df['isco2c'] = pd.to_numeric(piaac_df['isco2c'], errors='coerce')
     piaac_df['isco1l'] = pd.to_numeric(piaac_df['isco1l'], errors='coerce')
@@ -60,22 +60,22 @@ def occupations(piaac_df, log_df):
 
     # check and drop for 1-digit occupation groups
     log_record = 'check and drop for 1-digit occupation groups'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     piaac_df, log_df = clean.drop_nan(piaac_df, 'isco1c', log_df)
 
     # check and drop for 2-digit occupation groups
     log_record = 'check and drop for 2-digit occupation groups'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     piaac_df, log_df = clean.drop_nan(piaac_df, 'isco2c', log_df)
 
     # dropping observations for which isco1c is encoded as missing (9995, 9996, 9997, 9998, 9999)
     log_record = 'dropping observations for which isco1c is encoded as missing (9995, 9996, 9997, 9998, 9999)'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     piaac_df, log_df = clean.drop_val(piaac_df, 'isco1c', [9995, 9996, 9997, 9998, 9999], '==', log_df)
 
     # creating occupation group label variable for 1-digit groups
     log_record = 'creating occupation group label variable for 1-digit groups'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     conditions = [
         (piaac_df['isco1c'] == 1),
         (piaac_df['isco1c'] == 2),
@@ -102,7 +102,7 @@ def occupations(piaac_df, log_df):
 
     # creating occupation group label variable for 2-digit groups
     log_record = 'creating occupation group label variable for 2-digit groups'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     conditions = [
         (piaac_df['isco2c'] == 11),
         (piaac_df['isco2c'] == 12),
@@ -195,7 +195,7 @@ def occupations(piaac_df, log_df):
 
     # creating major custom occupation groups based on ISCO-08 required skill level
     log_record = 'creating major custom occupation groups based on ISCO-08 required skill level'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     conditions = [
         (piaac_df['isco2c'] == 11),
         (piaac_df['isco2c'] == 12),
@@ -232,24 +232,24 @@ def occupations(piaac_df, log_df):
 
     # check and drop for custom occupation groups
     log_record = 'check and drop for custom occupation groups'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     piaac_df, log_df = clean.drop_nan(piaac_df, 'isco_lbl', log_df)
 
     # dropping armed orces due to small sample
     log_record = 'dropping armed orces due to small sample'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     piaac_df, log_df = clean.drop_val(piaac_df, 'isco2c', [1, 2, 3], '==', log_df)
 
     # creating variables for country-specific occupation groups
     log_record = 'creating variables for country-specific occupation groups'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     piaac_df['cntry_isco_lbl'] = piaac_df['cntrycode'] + ' ' + piaac_df['isco_lbl']
     piaac_df['cntry_isco1c_lbl'] = piaac_df['cntrycode'] + ' ' + piaac_df['isco1c_lbl']
     piaac_df['cntry_isco2c_lbl'] = piaac_df['cntrycode'] + ' ' + piaac_df['isco2c_lbl']
     
     # dropping country-specific occupations groups with n<30
     log_record = 'dropping occupations groups with n<30'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     low_sample_occs = []
     for group in piaac_df['cntry_isco_lbl'].unique():
         if float(piaac_df['cntry_isco_lbl'].value_counts()[group]) < 30:
@@ -297,18 +297,18 @@ def education(piaac_df, log_df):
 
     # convert ISCED (b_q01a) to a float
     log_record = 'converting ISCED level to a float'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     piaac_df['b_q01a'] = pd.to_numeric(piaac_df['b_q01a'], errors='coerce')
     
     # count missing values in ISCED
     var = 'b_q01a'
     log_record = 'missing values cleaning skipped for ' + var
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     log_record = (str(piaac_df.shape[0] - piaac_df[var].isnull().value_counts()[False]) + ' observations have the value of nan for ' + var)
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
 
     log_record = 'creating a variable for obtained ISCO-08 skill level'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     # create a list of conditions for conversion of ISCED into skill level
     conditions = [
         (piaac_df['b_q01a'] == 1),
@@ -325,29 +325,29 @@ def education(piaac_df, log_df):
 
     # print table of ISCED - skill level mapping
     log_record = 'print table of ISCED - skill level mapping'
-    log_df = utility.log(log_df, log_record)
-    utility.print_tab(pd.crosstab(index=piaac_df['b_q01a'], columns=piaac_df['isco08_sl_o'], margins=True))
+    log_df = utilities.log(log_df, log_record)
+    utilities.print_tab(pd.crosstab(index=piaac_df['b_q01a'], columns=piaac_df['isco08_sl_o'], margins=True))
 
     # converting isco08_sl_o to float
     log_record = 'converting isco08_sl_o to float'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     piaac_df['isco08_sl_o'] = pd.to_numeric(piaac_df['isco08_sl_o'], errors='coerce')
     
     # count missing values in obtained skill level
     var = 'isco08_sl_o'
     log_record = 'missing values cleaning skipped for ' + var
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     log_record = (str(piaac_df.shape[0] - piaac_df[var].isnull().value_counts()[False]) + ' observations have the value of nan for ' + var)
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
 
     # convert b_q01c2 (year of finish) to float
     log_record = 'convert b_q01c2 (year of finish) to float'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     piaac_df['b_q01c2'] = pd.to_numeric(piaac_df['b_q01c2'], errors='coerce')
 
     # creating a variable for the year when higher education decision was supposedly made
     log_record = 'creating a variable for the year when higher education decision was supposedly made'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     conditions =[
         (piaac_df['b_q01a'] < 11),
         (piaac_df['b_q01a'] >= 11)]
@@ -358,7 +358,7 @@ def education(piaac_df, log_df):
 
     # creating a variable for country specific decision year bins
     log_record = 'creating a variable for country specific decision year bins'
-    log_df = utility.log(log_df, log_record)
+    log_df = utilities.log(log_df, log_record)
     piaac_df['cntry_yr'] = piaac_df['cntrycode'] + ' ' + piaac_df['decis_yr'].astype(str).str[:4]
     
     return piaac_df, log_df

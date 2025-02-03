@@ -1,7 +1,11 @@
+"""
+
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 
-from src import utility
+from src import utilities
 
 """
 LAST REVISED: 09.04.23
@@ -296,11 +300,11 @@ def corr_heat_map(piaac_df, corr_type, measures_list, measures_labels, country, 
     y = measures_labels
     
     if (country == 'all') & (corr_type == 'matthews'):
-        heatmap_data = np.array(utility.mcc_matrix(piaac_df, measures_list).round(2))
+        heatmap_data = np.array(utilities.mcc_matrix(piaac_df, measures_list).round(2))
         bar_label = "Matthews correlation coefficient"
         
     elif (country != 'all') & (corr_type == 'matthews'):
-        heatmap_data = np.array(utility.mcc_matrix(piaac_df.loc[piaac_df['cntryname'] == country], measures_list).round(2))
+        heatmap_data = np.array(utilities.mcc_matrix(piaac_df.loc[piaac_df['cntryname'] == country], measures_list).round(2))
         bar_label = "Matthews correlation coefficient"
         
     elif (country == 'all') & (corr_type == 'pearson'):
