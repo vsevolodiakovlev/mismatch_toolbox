@@ -1,6 +1,6 @@
 # Labout Mismatch Toolbox for PIAAC
 
-[Measures](#measures) | [Usage](#usage) | [Codebook](#codebook) | [References](#references)
+[Usage](#usage) | [Codebook](#codebook) | [Example](#example) | [Meet Bruce!](#meet-bruce-labour-mismatch-measures-101) | [References](#references)
 
 ![figure](./figures/toolbox_logo.png)
 
@@ -8,22 +8,9 @@ This package provides a set of functions designed to compute education
 and skill mismatch using data from the 1st Cycle of the Survey of Adult 
 Skills (PIAAC). The currently available measures include job analysis, 
 realised matches, indirect self-assessment, direct self-assessment, 
-Pellizzari-Fichen, and Allen-Levels-Van-der-Velden.For the desription 
+Pellizzari-Fichen, and Allen-Levels-Van-der-Velden. For the desription 
 of the measures, please refer to Section 3: Labour Mismatch Measurement 
 Frameworks in [1].
-
-## Measures
-
-<img src="./bruce/bruce_ja.png" width="500">
-
-<img src="./bruce/bruce_rm.png" width="500">
-
-<img src="./bruce/bruce_isa.png" width="500">
-
-<img src="./bruce/bruce_pf.png" width="500">
-
-<img src="./bruce/bruce_alv.png" width="500">
-
 
 ## Usage
 
@@ -38,6 +25,10 @@ pip install matplotlib numpy pandas scikit-learn seaborn statistics tabulate
 import mismatch_toolbox as mt
 ```
 5. Type ``help(mt)`` to view the packages's description and available modules.
+
+## Codebook
+
+[International](https://www.oecd.org/content/dam/oecd/en/about/programmes/edu/piaac/data-materials/International-Codebook-PIAAC-Public-use-File-Variables-and-Values_Feb2023.xlsx) and [derived variables](https://www.oecd.org/content/dam/oecd/en/about/programmes/edu/piaac/data-materials/Codebook-for-derived-Variables-16March2015.docx) [cedobooks](https://www.oecd.org/en/data/datasets/piaac-1st-cycle-database.html#codebooks) are available at the PIAAC [website](https://www.oecd.org/en/about/programmes/piaac/piaac-data.html).
 
 ## Example
 
@@ -434,3 +425,19 @@ log_file = mt.utilities.section(sec_name, log_file)
 ```
 
 <img src="./figures/mcc_test_w.png">
+
+## Meet Bruce: labour mismatch measures 101 
+
+The following graphs are designed to communicate the intuition behind some of the mismatch measures that are supported by the package.
+
+<img src="./bruce/bruce_ja.png" width="700">
+ 
+<img src="./bruce/bruce_rm.png" width="700">
+
+<img src="./bruce/bruce_isa.png" width="700">
+
+<img src="./bruce/bruce_pf.png" width="700">
+
+<img src="./bruce/bruce_alv.png" width="700">
+
+## References
