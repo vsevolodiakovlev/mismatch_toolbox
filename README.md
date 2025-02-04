@@ -1,6 +1,6 @@
 # Labout Mismatch Toolbox for PIAAC
 
-[Measures](#measures) | [Usage](#to-use-the-module) | [Codebook](#codebook) | [References](#references)
+[Measures](#measures) | [Usage](#usage) | [Codebook](#codebook) | [References](#references)
 
 ![figure](./figures/toolbox_logo.png)
 
@@ -12,7 +12,20 @@ Pellizzari-Fichen, and Allen-Levels-Van-der-Velden.For the desription
 of the measures, please refer to Section 3: Labour Mismatch Measurement 
 Frameworks in [1].
 
-## To use the module
+## Measures
+
+<img src="./bruce/bruce_ja.png" width="500">
+
+<img src="./bruce/bruce_rm.png" width="500">
+
+<img src="./bruce/bruce_isa.png" width="500">
+
+<img src="./bruce/bruce_pf.png" width="500">
+
+<img src="./bruce/bruce_alv.png" width="500">
+
+
+## Usage
 
 1. Create a new directory with the input data make it your working directory
 2. Clone the repository to that directory
