@@ -415,6 +415,10 @@ measures = ['rm_mode_1',
             'isa_1',
             'pf_num_005']
 
+labels = ['Realized Matches',
+              'Indirect Self-Assessment',
+              'Pellizzari-Fichen Numeracy']
+
 mt.graphs.corr_heat_map(piaac_df = piaac, 
                         corr_type = 'matthews', 
                         measures_list = measures, 
