@@ -4,7 +4,7 @@ Labour mismatch data visualisation functions.
 Functions:
 ----------
 
-formatFloat(fmt, val)
+format_float(fmt, val)
     Convert a float to a string with a specified format.
     last updated: 03/02/2025
 
@@ -23,7 +23,7 @@ import matplotlib.pyplot as plt
 from mismatch_toolbox.src import utilities
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-def formatFloat(fmt, val):
+def format_float(fmt, val):
   
   """
   Convert a float to a string with a specified format.
@@ -42,9 +42,9 @@ def formatFloat(fmt, val):
 
     Example:
     --------
-    >>> formatFloat("%.2f", 3.14159)
+    >>> format_float("%.2f", 3.14159)
     "3.14"
-    >>> formatFloat("%.2f", -3.14159)
+    >>> format_float("%.2f", -3.14159)
     "-3.14"
   """
 
@@ -206,7 +206,7 @@ def shares_heatmap(piaac_df,
     if numbers == True:
         for i in range(len(y)):
             for j in range(len(x)):
-                text = ax.text(j, i, formatFloat("%.2f", heatmap_data[i, j]), ha="center", va="center",
+                text = ax.text(j, i, format_float("%.2f", heatmap_data[i, j]), ha="center", va="center",
                                color=textcolors[int(im.norm(heatmap_data[i, j]) > threshold)],
                                fontsize=14, rotation=0)
 
@@ -336,7 +336,7 @@ def corr_heat_map(piaac_df,
     # Loop over data dimensions and create text annotations.
     for i in range(len(y)):
         for j in range(len(x)):
-            text = ax.text(j, i, formatFloat("%.2f", heatmap_data[i, j]), ha="center", va="center",
+            text = ax.text(j, i, format_float("%.2f", heatmap_data[i, j]), ha="center", va="center",
                            color=textcolors[int(im.norm(heatmap_data[i, j]) > threshold)],
                            fontsize=fontsize, rotation=0)
 
