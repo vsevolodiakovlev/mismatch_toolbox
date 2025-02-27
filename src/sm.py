@@ -192,7 +192,7 @@ def pf_thresholds(piaac_df, occ_variable, skill_variable, dsa_relaxed, l_quantil
     9. Count missing values in mismatch thresholds
     """
     
-    log_record = 'creating dsa and dsa_relaxed']'
+    log_record = 'creating dsa and dsa_relaxed'
     log_df = utilities.log(log_df, log_record)
     piaac_df, log_df = dsa(piaac_df, log_df)
     
