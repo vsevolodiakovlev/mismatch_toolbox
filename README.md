@@ -1,6 +1,6 @@
 # Labout Mismatch Toolbox for PIAAC
 
-[Usage](#usage) | [Codebook](#codebook) | [Example](#example) | [Meet Bruce!](#meet-bruce-labour-mismatch-measures-101) | [References](#references)
+[Usage](#usage) | [Codebook](#codebook) | [Example](#example) | [References](#references)
 
 ![figure](./figures/toolbox_logo.png)
 
@@ -8,7 +8,7 @@ This package provides a set of functions designed to compute education
 and skill mismatch using data from the 1st Cycle of the Survey of Adult 
 Skills (PIAAC). The currently available measures include job analysis, 
 realised matches, indirect self-assessment, direct self-assessment, 
-Pellizzari-Fichen, and Allen-Levels-Van-der-Velden. For the desription 
+Pellizzari and Fichen (2017), and Allen et al. (2013). For the desription 
 of the measures, please refer to Section 3: Labour Mismatch Measurement 
 Frameworks in [1].
 
@@ -203,9 +203,20 @@ log[65] dropping observations with [cntry_isco_lbl]==['RUS Low skilled managers'
 log[66] n=73135; 540 observations have been removed
 ```
 
-### 3. Compute three mismatch measures
+### 3. Compute mismatch classification using five different measures with selected parameters
+- Job Analysis
+- Realised Matches with mode ± 1 standard deviation thesholds
+- Indirect Self-Assessment with 1 year gap
+- Pellizzari-Fichen for numeracy with the thresholds set using regular Direct Skill Assessment and the 5th and 95th percentiles
+- Allen-Levels-Van-der-Velden for numeracy with 1.5 z-score thresholds
 
 ```python
+# Job Analysis
+sec_name = 'Job Analysis'
+log_file = mt.utilities.section(sec_name, log_file)
+piaac, log_file = mt.em.ja(piaac_df = piaac,
+                            log_df = log_file)
+
 # Realised Matches - mode
 sec_name = 'Realised Matches - mode'
 log_file = mt.utilities.section(sec_name, log_file)
@@ -223,80 +234,116 @@ piaac, log_file = mt.em.isa(piaac_df = piaac,
 # Pellizzari-Fichen Numeracy
 sec_name = 'Pellizzari-Fichen Numeracy'
 log_file = mt.utilities.section(sec_name, log_file)
-piaac, log_file = mt.sm.dsa(piaac_df = piaac,
-                            log_df = log_file)
-
 piaac, log_file = mt.sm.pf(piaac_df = piaac, 
                            skill_var = 'num', 
                            precision = 0.05, 
                            dsa_relaxed = False, 
                            log_df = log_file)
+
+# Allen-Levels-Van-der-Velden Numeracy
+sec_name = 'Allen-Levels-Van-der-Velden Numeracy'
+log_file = mt.utilities.section(sec_name, log_file)
+piaac, log_file = mt.sm.alv(piaac_df = piaac,
+                            skill_var = 'num',
+                            precision = 1.5,
+                            log_df = log_file)
 ```
 
 Output:
 
 ```
+Job Analysis
+---------------------------------------------
+
+log[68] creating [isco08_sl_r]: variable for required skill level
+log[69] creating [ja]: variable for JA mismatch
+log[70] missing values cleaning skipped for [ja]
+log[71] 3698 observations have the value of nan for ja
+
 Realised Matches - mode
 ---------------------------------------------
 
-log[68] defining function calculating skill level mode and standard deviation
-log[69] calculating country-specific skill level mode and standard deviation
-log[70] creating [rm_mode_1]: variable for country-spec mode-based RM mismatch with 1 SDs threshold
-log[71] missing values cleaning skipped for [rm_mode_1]
-log[72] 3698 observations have the value of nan for rm_mode_1
+log[73] defining function calculating skill level mode and standard deviation
+log[74] calculating country-specific skill level mode and standard deviation
+log[75] creating [rm_mode_1]: variable for country-spec mode-based RM mismatch with 1 SDs threshold
+log[76] missing values cleaning skipped for [rm_mode_1]
+log[77] 3698 observations have the value of nan for rm_mode_1
 
 Indirect Self-Assessment
 ---------------------------------------------
 
-log[74] converting self-reported requirement to float
-log[75] converting years of education to float
-log[76] creating [isa_1]: variable for ISA mismatch
-log[77] missing values cleaning skipped for [isa_1]
-log[78] 2089 observations have the value of nan for isa_1
+log[79] converting self-reported requirement to float
+log[80] converting years of education to float
+log[81] creating [isa_1]: variable for ISA mismatch
+log[82] missing values cleaning skipped for [isa_1]
+log[83] 2089 observations have the value of nan for isa_1
 
 Pellizzari-Fichen Numeracy
 ---------------------------------------------
 
-log[80] converting [f_q07a] to float
-log[81] check and drop for missing values in [f_q07a]
-log[82] 519 observations have the value of nan for [f_q07a]
-log[83] n=73135
-log[84] removing the observations...
-log[85] no observations have the value of nan for [f_q07a]
-log[86] n=72616; 519 observations have been removed
-log[87] creating variable for being not challenged enough
-log[88] converting [f_q07b] to float
-log[89] check and drop for missing values in [f_q07b]
-log[90] 53 observations have the value of nan for [f_q07b]
-log[91] n=72616
-log[92] removing the observations...
-log[93] no observations have the value of nan for [f_q07b]
-log[94] n=72563; 53 observations have been removed
-log[95] creating variable for feeling need in training
-log[96] creating [dsa]: variable for DSA skill mismatch
-log[97] creating [dsa_relaxed]: variable for "relaxed" DSA skill mismatch
-log[98] missing values cleaning skipped for [dsa]
-log[99] 0 observations have the value of nan for dsa
-log[100] missing values cleaning skipped for [dsa_relaxed]
-log[101] 0 observations have the value of nan for dsa_relaxed
-log[102] creating [num]: variable for the average of literacy plausible values
-log[103] converting [num] to float
-log[104] missing values cleaning skipped for [num]
-log[105] 2 observations have the value of nan for [num]
-log[106] creating [num] skill mismatch thresholds, [dsa_relaxed] = False
-log[107] creating [dsa_num_min]: cntry_isco_lbl-specific thresholds at 0.05 and 0.95 percentiles
-log[108] missing values cleaning skipped for [dsa_num_max]
-log[109] 40 observations have the value of nan for dsa_num_max
-log[110] missing values cleaning skipped for [dsa_num_min]
-log[111] 40 observations have the value of nan for dsa_num_min
-log[112] creating [pf_num_005]: variable for literacy skill mismatch
-log[113] missing values cleaning skipped for [pf_num_005]
-log[114] 42 observations have the value of nan for [pf_num_005]
+log[85] creating [num]: variable for the average of literacy plausible values
+log[86] converting [num] to float
+log[87] missing values cleaning skipped for [num]
+log[88] 5 observations have the value of nan for [num]
+log[89] creating [num] skill mismatch thresholds, [dsa_relaxed] = False
+log[90] creating [dsa]
+log[91] converting [f_q07a] to float
+log[92] check and drop for missing values in [f_q07a]
+log[93] 519 observations have the value of nan for [f_q07a]
+log[94] n=73135
+log[95] removing the observations...
+log[96] no observations have the value of nan for [f_q07a]
+log[97] n=72616; 519 observations have been removed
+log[98] creating variable for being not challenged enough
+log[99] converting [f_q07b] to float
+log[100] check and drop for missing values in [f_q07b]
+log[101] 53 observations have the value of nan for [f_q07b]
+log[102] n=72616
+log[103] removing the observations...
+log[104] no observations have the value of nan for [f_q07b]
+log[105] n=72563; 53 observations have been removed
+log[106] creating variable for feeling need in training
+log[107] creating [dsa]: variable for DSA skill mismatch
+log[108] creating [dsa_relaxed]: variable for "relaxed" DSA skill mismatch
+log[109] missing values cleaning skipped for [dsa]
+log[110] 0 observations have the value of nan for dsa
+log[111] missing values cleaning skipped for [dsa_relaxed]
+log[112] 0 observations have the value of nan for dsa_relaxed
+log[113] creating [dsa_num_min]: cntry_isco_lbl-specific thresholds at 0.05 and 0.95 percentiles
+log[114] missing values cleaning skipped for [dsa_num_max]
+log[115] 40 observations have the value of nan for dsa_num_max
+log[116] missing values cleaning skipped for [dsa_num_min]
+log[117] 40 observations have the value of nan for dsa_num_min
+log[118] creating [pf_num_005]: variable for literacy skill mismatch
+log[119] missing values cleaning skipped for [pf_num_005]
+log[120] 42 observations have the value of nan for [pf_num_005]
+
+Allen-Levels-Van-der-Velden Numeracy
+---------------------------------------------
+
+log[122] creating [num]: variable for the average of literacy plausible values
+log[123] converting [num] to float
+log[124] missing values cleaning skipped for [num]
+log[125] 2 observations have the value of nan for [num]
+log[126] creating [num_zscore] (standardising)
+log[127] numeracy numeracy use variables to float
+log[128] creating and standardising aggregate numeracy use variables
+log[129] creating Allen-Levels-van-der-Velden skill mismatch variable for numeracy
+log[130] missing values cleaning skipped for [alv_num_15]
+log[131] 56 observations have the value of nan for [alv_num_15]
 ```
 
 ### 4. Calculate mismatch shares across countries
 
 ```python
+# Shares: Job Analysis
+sec_name = 'Shares: Job Analysis'
+log_file = mt.utilities.section(sec_name, log_file)
+piaac, log_file = mt.utilities.mismatch_shares(piaac_df = piaac, 
+                                               mismatch_variable = 'ja', 
+                                               feature = 'cntrycode', 
+                                               log_df = log_file)
+
 # Shares: Realised Matches
 sec_name = 'Shares: Realised Matches'
 log_file = mt.utilities.section(sec_name, log_file)
@@ -320,34 +367,59 @@ piaac, log_file = mt.utilities.mismatch_shares(piaac_df = piaac,
                                                mismatch_variable = 'pf_num_005', 
                                                feature = 'cntrycode', 
                                                log_df = log_file)
+
+# Shares: Allen-Levels-Van-der-Velden Numeracy
+sec_name = 'Shares: Allen-Levels-Van-der-Velden Numeracy'
+log_file = mt.utilities.section(sec_name, log_file)
+piaac, log_file = mt.utilities.mismatch_shares(piaac_df = piaac, 
+                                               mismatch_variable = 'alv_num_15', 
+                                               feature = 'cntrycode', 
+                                               log_df = log_file)
+
 ```
 
 Output:
 
 ```
+Shares: Job Analysis
+---------------------------------------------
+
+log[133] creating mismatch shares for [ja] across [cntrycode]
+log[134] [ja_wellshare_by_cntrycode] created
+log[135] [ja_overshare_by_cntrycode] created
+log[136] [ja_undershare_by_cntrycode] created
+
 Shares: Realised Matches
 ---------------------------------------------
 
-log[116] creating mismatch shares for [rm_mode_1] across [cntrycode]
-log[117] [rm_mode_1_wellshare_by_cntrycode] created
-log[118] [rm_mode_1_overshare_by_cntrycode] created
-log[119] [rm_mode_1_undershare_by_cntrycode] created
+log[138] creating mismatch shares for [rm_mode_1] across [cntrycode]
+log[139] [rm_mode_1_wellshare_by_cntrycode] created
+log[140] [rm_mode_1_overshare_by_cntrycode] created
+log[141] [rm_mode_1_undershare_by_cntrycode] created
 
 Shares: Indirect Self-Assessment
 ---------------------------------------------
 
-log[121] creating mismatch shares for [isa_1] across [cntrycode]
-log[122] [isa_1_wellshare_by_cntrycode] created
-log[123] [isa_1_overshare_by_cntrycode] created
-log[124] [isa_1_undershare_by_cntrycode] created
+log[143] creating mismatch shares for [isa_1] across [cntrycode]
+log[144] [isa_1_wellshare_by_cntrycode] created
+log[145] [isa_1_overshare_by_cntrycode] created
+log[146] [isa_1_undershare_by_cntrycode] created
 
 Shares: Pellizzari-Fichen Numeracy
 ---------------------------------------------
 
-log[126] creating mismatch shares for [pf_num_005] across [cntrycode]
-log[127] [pf_num_005_wellshare_by_cntrycode] created
-log[128] [pf_num_005_overshare_by_cntrycode] created
-log[129] [pf_num_005_undershare_by_cntrycode] created
+log[148] creating mismatch shares for [pf_num_005] across [cntrycode]
+log[149] [pf_num_005_wellshare_by_cntrycode] created
+log[150] [pf_num_005_overshare_by_cntrycode] created
+log[151] [pf_num_005_undershare_by_cntrycode] created
+
+Shares: Allen-Levels-Van-der-Velden Numeracy
+---------------------------------------------
+
+log[153] creating mismatch shares for [alv_num_15] across [cntrycode]
+log[154] [alv_num_15_wellshare_by_cntrycode] created
+log[155] [alv_num_15_overshare_by_cntrycode] created
+log[156] [alv_num_15_undershare_by_cntrycode] created
 ```
 
 ### 5. Plot shares heatmap
@@ -364,26 +436,30 @@ y_labels = [False, False, True]
 
 for i in [0, 1, 2]:
     
-    measures = ['rm_mode_1_' + sharename[i] + '_by_cntrycode',
-                'isa_1_' + sharename[i] + '_by_cntrycode',
-                'pf_num_005_' + sharename[i] + '_by_cntrycode']
+    measures = ['ja_'           + sharename[i] + '_by_cntrycode',
+                'rm_mode_1_'    + sharename[i] + '_by_cntrycode',
+                'isa_1_'        + sharename[i] + '_by_cntrycode',
+                'pf_num_005_'   + sharename[i] + '_by_cntrycode',
+                'alv_num_15_'  + sharename[i] + '_by_cntrycode']
     
-    labels = ['Realized Matches',
+    labels = ['Job Analysis',
+              'Realized Matches',
               'Indirect Self-Assessment',
-              'Pellizzari-Fichen Numeracy']
+              'Pellizzari-Fichen Numeracy',
+              'Allen-Levels-Van-der-Velden Numeracy']
     
     mt.graphs.shares_heatmap(piaac_df = piaac, 
                              measures_list = measures, 
                              measures_labels = labels, 
-                             cluster = 'cntrycode', 
-                             feature = 'earn', 
+                             group_var = 'cntrycode', 
+                             sort_by = 'earn', 
                              title = titles[i],                             
                              y_labels = y_labels[i], 
                              x_labels = x_labels[i], 
                              colorbar = True, 
                              numbers = True, 
                              nan_present = True,
-                             size = (3, 15),
+                             size = (10, 20),
                              vertical = True, 
                              filename = 'test_' + sharename[i] + '_by_cntrycode', 
                              display = True,
@@ -398,9 +474,9 @@ Output:
 ```
 Mismatch Shares Heatmap
 ---------------------------------------------
-log[131] file is saved as test_undershare_by_cntrycode.pdf
-log[132] file is saved as test_wellshare_by_cntrycode.pdf
-log[133] file is saved as test_overshare_by_cntrycode.pdf
+log[158] file is saved as test_undershare_by_cntrycode.pdf
+log[159] file is saved as test_wellshare_by_cntrycode.pdf
+log[160] file is saved as test_overshare_by_cntrycode.pdf
 ```
 
 <img src="./figures/test_undershare_by_cntrycode.png"> <img src="./figures/test_wellshare_by_cntrycode.png"> <img src="./figures/test_overshare_by_cntrycode.png">
@@ -412,28 +488,53 @@ log[133] file is saved as test_overshare_by_cntrycode.pdf
 sec_name = 'Correlation Heatmap'
 log_file = mt.utilities.section(sec_name, log_file)
 
-measures = ['rm_mode_1',
-            'isa_1',
-            'pf_num_005']
+log_record = 'splitiing the mismatch variables into 3 groups'
+log_file = mt.utilities.log(log_file, log_record)
 
-labels = ['Realized Matches',
-              'Indirect Self-Assessment',
-              'Pellizzari-Fichen Numeracy']
+measures = ['ja',
+            'rm_mode_1',
+            'isa_1',
+            'pf_num_005',
+            'alv_num_15']
+
+piaac, log_record = mt.utilities.mismatch_split(piaac_df = piaac,
+                                                measure_list = measures,
+                                                log_df = log_file)
+
+measures_u = [x + '_u' for x in measures]
 
 mt.graphs.corr_heat_map(piaac_df = piaac, 
                         corr_type = 'matthews', 
-                        measures_list = measures, 
+                        measures_list = measures_u, 
                         measures_labels = labels, 
                         country = 'all', 
-                        title = "Well-Matched",                     
-                        x_labels = True, 
+                        title = "Under-Matched",                     
+                        x_labels = False, 
                         y_labels = True,
-                        size = (5, 5), 
-                        filename = 'mcc_test_w',
+                        size = (15, 10), 
+                        filename = 'mcc_test_u',
                         display = True,
                         save = True)
                         
-log_record = 'file is saved as ' + 'mcc_test_w' + '.pdf'
+log_record = 'file is saved as ' + 'mcc_test_u' + '.pdf'
+log_file = mt.utilities.log(log_file, log_record)
+
+measures_o = [x + '_o' for x in measures]
+
+mt.graphs.corr_heat_map(piaac_df = piaac, 
+                        corr_type = 'matthews', 
+                        measures_list = measures_o, 
+                        measures_labels = labels, 
+                        country = 'all', 
+                        title = "Over-Matched",                     
+                        x_labels = False, 
+                        y_labels = True,
+                        size = (15, 10), 
+                        filename = 'mcc_test_o',
+                        display = True,
+                        save = True)
+
+log_record = 'file is saved as ' + 'mcc_test_o' + '.pdf'
 log_file = mt.utilities.log(log_file, log_record)
 ```
 
@@ -442,23 +543,34 @@ Output:
 ```
 Correlation Heatmap
 ---------------------------------------------
-log_file = mt.utilities.section(sec_name, log_file)
+
+log[162] splitiing the mismatch variables into 3 groups
+log[163] splitting [ja] into 3 binary variables
+log[164] [ja_u] created
+log[165] [ja_w] created
+log[166] [ja_o] created
+log[167] splitting [rm_mode_1] into 3 binary variables
+log[168] [rm_mode_1_u] created
+log[169] [rm_mode_1_w] created
+log[170] [rm_mode_1_o] created
+log[171] splitting [isa_1] into 3 binary variables
+log[172] [isa_1_u] created
+log[173] [isa_1_w] created
+log[174] [isa_1_o] created
+log[175] splitting [pf_num_005] into 3 binary variables
+log[176] [pf_num_005_u] created
+log[177] [pf_num_005_w] created
+log[178] [pf_num_005_o] created
+log[179] splitting [alv_num_15] into 3 binary variables
+log[180] [alv_num_15_u] created
+log[181] [alv_num_15_w] created
+log[182] [alv_num_15_o] created
+log[183] file is saved as mcc_test_u.pdf
+log[184] file is saved as mcc_test_o.pdf
+
 ```
 
-<img src="./figures/mcc_test_w.png">
-
-## Meet Bruce: labour mismatch measures 101 
-
-The following graphs are designed to communicate the intuition behind some of the mismatch measures that are supported by the package.
-
-<img src="./bruce/bruce_ja.png" width="700">
- 
-<img src="./bruce/bruce_rm.png" width="700">
-
-<img src="./bruce/bruce_isa.png" width="700">
-
-<img src="./bruce/bruce_pf.png" width="700">
-
-<img src="./bruce/bruce_alv.png" width="700">
+<img src="./figures/mcc_test_u.png">
+<img src="./figures/mcc_test_o.png">
 
 ## References
