@@ -10,7 +10,7 @@ dsa(piaac_df, log_df)
 
 pf_thresholds(piaac_df, occ_variable, skill_variable, dsa_relaxed, l_quantile, h_quantile, log_df)
     Create Pellizzari and Fichen skill mismatch classification thresholds.
-    last update: 24/01/2025
+    last update: 27/02/2025
 
 pf(piaac_df, skill_var, precision, dsa_relaxed, log_df)
     Measure skill mismatch using Pellizzari and Fichen (2017) method.
@@ -194,9 +194,15 @@ def pf_thresholds(piaac_df, occ_variable, skill_variable, dsa_relaxed, l_quantil
     
     if dsa_relaxed == True:
         dsa_var = 'dsa_relaxed'
+        log_record = 'creating [' + dsa_var + ']'
+        log_df = utilities.log(log_df, log_record)
+        piaac_df, log_df = dsa_relaxed(piaac_df, log_df)
     else: 
         dsa_var = 'dsa'
-    
+        log_record = 'creating [' + dsa_var + ']'
+        log_df = utilities.log(log_df, log_record)
+        piaac_df, log_df = dsa(piaac_df, log_df)
+
     log_record = 'creating [' + dsa_var + '_' + skill_variable + '_min]: ' + occ_variable +'-specific thresholds at ' + str(l_quantile) + ' and ' + str(h_quantile) + ' percentiles'
     log_df = utilities.log(log_df, log_record)
     conditions = []
