@@ -479,7 +479,7 @@ log[159] file is saved as test_wellshare_by_cntrycode.pdf
 log[160] file is saved as test_overshare_by_cntrycode.pdf
 ```
 
-<img src="./figures/test_undershare_by_cntrycode.png"> <img src="./figures/test_wellshare_by_cntrycode.png"> <img src="./figures/test_overshare_by_cntrycode.png">
+<img src="./figures/test_undershare_by_cntrycode.png" height="1100"> <img src="./figures/test_wellshare_by_cntrycode.png" height="1100"> <img src="./figures/test_overshare_by_cntrycode.png" height="1100"> 
 
 ### 6. Plot correlation heatmap
 
@@ -570,7 +570,7 @@ log[184] file is saved as mcc_test_o.pdf
 
 ```
 
-<img src="./figures/mcc_test_u.png">
-<img src="./figures/mcc_test_o.png">
+<img src="./figures/mcc_test_u.png" height="250">
+<img src="./figures/mcc_test_o.png" height="250">
 
 ## References
