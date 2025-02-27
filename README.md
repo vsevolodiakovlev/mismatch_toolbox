@@ -556,6 +556,711 @@ log[184] file is saved as mcc_test_o.pdf
 
 # Functions
 
+| Module    | Functions                                                                 |
+|-----------|---------------------------------------------------------------------------|
+| `utilities` | [`section`](#utilitiessection)  [`log`](#utilitieslog)  [`print`](#utilitiesprint)  [`mismatch_shares`](#utilitiesmismatch_shares)  [`mismatch_split`](#utilitiesmismatch_split)  [`mcc_matrix`](#utilitiesmcc_matrix) |
+| `clean`     | [`drop_nan`](#cleandrop_nan)  [`drop_val`](#cleandrop_val)  [`preparation`](#cleanpreparation) |
+| `isco`      | [`occupations`](#iscooccupations)  [`education`](#iscoeducation) |
+| `em`        | [`mean_sl`](#emmeansl)  [`mode_sl`](#emmode_sl)  [`rm_mean`](#emrm_mean)  [`rm_mode`](#emrm_mode)  [`ja`](#emja)  [`isa`](#emisa) |
+| `sm`        | [`dsa`](#smdsa)  [`pf_thresholds`](#smpf_thresholds)  [`pf`](#smpf)  [`alv`](#smalv) |
+| `graphs`    | [`format_float`](#graphsformat_float)  [`shares_heatmap`](#graphsshares_heatmap)  [`corr_heat_map`](#graphscorr_heat_map) |
+
+---
+
+### utilities.section
+
+Create a new section in the log file.
+
+_Parameters:_
+
+**`new_section` : str**, contains new section title.
+
+**`log_df` : pandas.core.frame.DataFrame**, log dataframe with 3 columns ('index', 'section', 'record').
+
+_Returns:_
+
+**`log_df` : pandas.core.frame.DataFrame**, updated log dataframe.
+
+_Description:_
+
+1. Print the `new_section`.
+2. Append a record to `log_df` containing `new_section` (new log records will be entered under `new_section` until renewed).
+3. Return the updated `log_df`.
+
+---
+
+### utilities.log
+
+Add a new record to the log file.
+
+_Parameters:_
+
+**`log_df` : pandas.core.frame.DataFrame**, log dataframe with 3 columns ('index', 'section', 'record').
+
+**`record` : str**, contains new log record.
+
+_Returns:_
+
+**`log_df` : pandas.core.frame.DataFrame**, updated log dataframe.
+
+_Description:_
+
+1. Print the `record`.
+2. Append the `record` to `log_df`.
+3. Return the updated `log_df`.
+
+---
+
+### utilities.print
+
+Print a dataframe in a tabular format.
+
+_Parameters:_
+
+**`df` : pandas.core.frame.DataFrame**, any dataframe.
+
+_Returns:_
+
+**`None`**
+
+_Description:_
+
+1. Use the `tabulate` package to print `df` with the following settings:
+    * `headers='keys'`
+    * `tablefmt='psql'`
+
+---
+
+### utilities.mismatch_shares
+
+Compute mismatch shares within each group.
+
+_Parameters:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, piaac dataset.
+
+**`mismatch_variable` : str**, mismatch variable name.
+
+**`feature` : str**, group variable.
+
+**`log_df` : pandas.core.frame.DataFrame**, log file.
+
+_Returns:_
+
+**`df` : pandas.core.frame.DataFrame**, piaac dataset with mismatch shares added.
+
+**`log_df` : pandas.core.frame.DataFrame**, updated log file.
+
+_Description:_
+
+1. Compute relative frequencies of each mismatch value (shares) within each group;
+2. Create respective mismatch share variables;
+3. Register the changes in `log_df`.
+
+---
+
+### utilities.mismatch_split
+
+Split each measure into 3 binary variables.
+
+_Parameters:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, piaac dataset.
+
+**`measure_list` : list**, list of measures.
+
+**`log_df` : pandas.core.frame.DataFrame**, log file.
+
+_Returns:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, updated piaac dataset.
+
+**`log_df` : pandas.core.frame.DataFrame**, updated log file.
+
+_Description:_
+
+1. For each measure in `measure_list`:
+    * Create 3 binary variables:
+        - `[measure]_u`: 1 if undermatched (`[measure] == -1`) and 0 otherwise;
+        - `[measure]_w`: 1 if well-matched (`[measure] == 0`) and 0 otherwise;
+        - `[measure]_o`: 1 if overmatched (`[measure] == 1`) and 0 otherwise;
+    * Register the changes in `log_df`.
+2. Return updated `piaac_df` and `log_df`.
+
+---
+
+### utilities.mcc_matrix
+
+Compute Matthew's correlation coefficient matrix.
+
+_Parameters:_
+
+**`df` : pandas.core.frame.DataFrame**, dataset.
+
+**`feature_list` : list**, list of features.
+
+_Returns:_
+
+**`mcc_matrix` : pandas.core.frame.DataFrame**, Matthew's correlation coefficient matrix.
+
+_Description:_
+
+1. For each pair of features in `feature_list`:
+    * Compute Matthew's correlation coefficient;
+    * Fill the matrix with the computed values;
+2. Return the matrix.
+
+---
+
+### clean.drop_nan
+
+Drop observations containing missing values for a given variable.
+
+_Parameters:_
+
+**`df` : pandas.core.frame.DataFrame**, dataset.
+
+**`var` : str**, variable name.
+
+**`log_df` : pandas.core.frame.DataFrame**, log file.
+
+_Returns:_
+
+**`df` : pandas.core.frame.DataFrame**, updated dataset.
+
+**`log_df` : pandas.core.frame.DataFrame**, updated log file.
+
+_Description:_
+
+1. Identify whether the variable is string or numeric;
+2. If string: identify observations containing 'nan';
+3. If numeric: identify observations containing missing values;
+4. Drop observations containing either missing values or 'nan';
+5. Repeat the missing values check;
+6. Register the changes in `log_df`.
+
+---
+
+### clean.drop_val
+
+Drop observations with specific values for a given variable.
+
+_Parameters:_
+
+**`df` : pandas.core.frame.DataFrame**, dataset.
+
+**`var` : str**, variable name.
+
+**`values_list` : list**, values to be either dropped or kept.
+
+**`operator` : str**, either "==" or "!=".
+
+**`log_df` : pandas.core.frame.DataFrame**, log file.
+
+_Returns:_
+
+**`df` : pandas.core.frame.DataFrame**, updated dataset.
+
+**`log_df` : pandas.core.frame.DataFrame**, updated log file.
+
+_Description:_
+
+For each value in `values_list`:
+1. Drop observations that satisfy the following expression: "observation `operator` value";
+2. Register the changes in `log_df`.
+
+---
+
+### clean.preparation
+
+Prepare the dataset for analysis.
+
+_Parameters:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, dataset.
+
+**`log_df` : pandas.core.frame.DataFrame**, log file.
+
+_Returns:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, updated dataset.
+
+**`log_df` : pandas.core.frame.DataFrame**, updated log file.
+
+_Description:_
+
+1. Convert `cntryid` to float;
+2. Create a variable with country names;
+3. Create a variable with country codes;
+4. Check and drop for missing values in country ID;
+5. Identify the respondents who are unemployed or out of the labour force and drop them from the dataset;
+6. Create a variable `earn` as a float of `earnhrbonusppp`, drop missing values, and trim at the 1st and 99th percentiles;
+7. Register the changes in `log_df`.
+
+---
+
+### isco.occupations
+
+Clean ISCO-08 occupation variables and create custom occupation groups.
+
+_Parameters:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, PIAAC dataset.
+
+**`log_df` : pandas.core.frame.DataFrame**, log DataFrame.
+
+_Returns:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, PIAAC dataset with cleaned occupation variables and created custom occupation groups.
+
+**`log_df` : pandas.core.frame.DataFrame**, updated log DataFrame.
+
+_Description:_
+
+1. Convert current job (isco1c, isco2c) and last job (isco1l, isco2l) 1-digit and 2-digit ISCO-08 occupation groups to float.
+2. Check and drop missing values for 1-digit and 2-digit occupation groups.
+3. Drop observations for which isco1c is encoded as missing (9995, 9996, 9997, 9998, 9999).
+4. Create variables isco1c_lbl and isco2c_lbl for isco1c and isco2c labels.
+5. Create variable isco_lbl for custom occupation groups based on ISCO-08 required skill level.
+6. Check and drop missing values for custom occupation.
+7. Drop armed forces due to small sample.
+8. Create variables cntry_isco_lbl, cntry_isco1c_lbl, and cntry_isco2c_lbl for country-specific occupation groups.
+9. Drop country-specific occupation groups with n<30.
+
+---
+
+### isco.education
+
+Clean education variables and convert ISCED to ISCO-08 skill level.
+
+_Parameters:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, PIAAC dataset.
+
+**`log_df` : pandas.core.frame.DataFrame**, log DataFrame.
+
+_Returns:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, PIAAC dataset with cleaned education variables and created ISCO-08 skill level.
+
+**`log_df` : pandas.core.frame.DataFrame**, updated log DataFrame.
+
+_Description:_
+
+1. Convert ISCED (b_q01a) to a float.
+2. Count missing values in ISCED.
+3. Create skill level variable using specified conditions and values lists.
+4. Print table of ISCED - ISCO-08 skill level mapping.
+5. Convert obtained ISCO-08 skill level (isco08_sl_o) to float.
+6. Count missing values in obtained ISCO-08 skill level.
+7. Convert year of finish (b_q01c2) to float.
+8. Create a variable for the year when higher education decision was supposedly made.
+9. Create a variable for country-specific decision year bins.
+
+---
+
+### em.mean_sl
+
+Calculate mean and standard deviation of skill level for each occupation group.
+
+_Parameters:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, PIAAC dataset.
+
+**`occ_variable` : str**, occupation variable.
+
+**`mean_name` : str**, name of the mean skill level variable.
+
+**`std_name` : str**, name of the standard deviation variable.
+
+_Returns:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, updated PIAAC dataset.
+
+_Description:_
+
+1. Loop across occupation groups, compute mean skill level for each group and add the occupation group to the conditions and mean skill level to the values.
+2. Create the mean skill level variable.
+3. Repeat for standard deviation.
+
+---
+
+### em.mode_sl
+
+Calculate mode and standard deviation of skill level for each occupation group.
+
+_Parameters:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, PIAAC dataset.
+
+**`occ_variable` : str**, occupation variable.
+
+**`mode_name` : str**, name of the mode skill level variable.
+
+**`std_name` : str**, name of the standard deviation variable.
+
+_Returns:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, updated PIAAC dataset.
+
+_Description:_
+
+1. Loop across occupation groups, compute mode skill level for each group and add the occupation group to the conditions and mode skill level to the values.
+2. Create the mode skill level variable.
+3. Repeat for standard deviation.
+
+---
+
+### em.rm_mean
+
+Measure education mismatch using mean-based realised matches.
+
+_Parameters:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, PIAAC dataset.
+
+**`SDs` : float**, number of standard deviations defining the classification threshold, e.g., if `SDs = 1`, the thresholds are set at -1 and 1 standard deviation from the mean.
+
+**`log_df` : pandas.core.frame.DataFrame**, log DataFrame.
+
+_Returns:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, updated PIAAC dataset.
+
+**`log_df` : pandas.core.frame.DataFrame**, updated log DataFrame.
+
+_Description:_
+
+1. Calculate country-specific skill level mean and standard deviation.
+2. Create variable for country-specific mean-based mismatch.
+3. Count missing values in mean-based mismatch.
+
+---
+
+### em.rm_mode
+
+Measure education mismatch using mode-based realised matches.
+
+_Parameters:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, PIAAC dataset.
+
+**`SDs` : float**, number of standard deviations defining the classification threshold, e.g., if `SDs = 1`, the thresholds are set at -1 and 1 standard deviation from the mode.
+
+**`log_df` : pandas.core.frame.DataFrame**, log DataFrame.
+
+_Returns:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, updated PIAAC dataset.
+
+**`log_df` : pandas.core.frame.DataFrame**, updated log DataFrame.
+
+_Description:_
+
+1. Calculate country-specific skill level mode and standard deviation.
+2. Create variable for country-specific mode-based mismatch.
+3. Count missing values in mode-based mismatch.
+
+---
+
+### em.ja
+
+Measure education mismatch using job analysis.
+
+_Parameters:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, PIAAC dataset.
+
+**`log_df` : pandas.core.frame.DataFrame**, log DataFrame.
+
+_Returns:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, updated PIAAC dataset.
+
+**`log_df` : pandas.core.frame.DataFrame**, updated log DataFrame.
+
+_Description:_
+
+1. Create variable for required skill level.
+2. Create variable for mismatch.
+3. Count missing values in JA mismatch.
+
+---
+
+### em.isa
+
+Measure education mismatch using indirect self-assessment.
+
+_Parameters:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, PIAAC dataset.
+
+**`gap` : float**, allowed gap in years of education to be classified as well-matched.
+
+**`log_df` : pandas.core.frame.DataFrame**, log DataFrame.
+
+_Returns:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, updated PIAAC dataset.
+
+**`log_df` : pandas.core.frame.DataFrame**, updated log DataFrame.
+
+_Description:_
+
+1. Convert variable 'yrsget' (self-reported required education) to float.
+2. Convert variable 'yrsqual' (years of education) to float.
+3. Create variable for mismatch.
+4. Count missing values in ISA mismatch.
+
+---
+
+### sm.dsa
+
+Measure skill mismatch using direct self-assessment.
+
+_Parameters:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, PIAAC dataset.
+
+**`log_df` : pandas.core.frame.DataFrame**, log DataFrame.
+
+_Returns:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, updated PIAAC dataset.
+
+**`log_df` : pandas.core.frame.DataFrame**, updated log DataFrame.
+
+_Description:_
+
+1. Check and drop for missing values in `f_q07a`.
+2. Create variable for being not challenged enough (`notchal`).
+3. Check and drop for missing values in `f_q07b`.
+4. Create variable for feeling need in training (`needtrain`).
+5. Create variable for DSA skill mismatch (`dsa`).
+6. Create variable for "relaxed" DSA skill mismatch (`dsa_relaxed`).
+7. Count missing values in `dsa`.
+8. Count missing values in `dsa_relaxed`.
+
+---
+
+### sm.pf_thresholds
+
+Create Pellizzari and Fichen skill mismatch classification thresholds.
+
+_Parameters:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, PIAAC dataset.
+
+**`occ_variable` : str**, occupation variable.
+
+**`skill_variable` : str**, skill variable.
+
+**`dsa_relaxed` : bool**, relaxed DSA flag. If True, use relaxed DSA instead of regular DSA.
+
+**`l_quantile` : float**, quantile for the lower threshold.
+
+**`h_quantile` : float**, quantile for the higher threshold.
+
+**`log_df` : pandas.core.frame.DataFrame**, log DataFrame.
+
+_Returns:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, updated PIAAC dataset.
+
+**`log_df` : pandas.core.frame.DataFrame**, updated log DataFrame.
+
+_Description:_
+
+1. For each occupation group, identify the lower quantile in the distribution of skill of the workers who are neither not challenged enough nor feel need in additional training.
+2. Append occupation group to the list of conditions.
+3. Append the lower quantile to the list of values.
+4. Create the variable using conditions and values.
+5. For each occupation group, identify the higher quantile in the distribution of skill of the workers who are neither not challenged enough nor feel need in additional training.
+6. Append occupation group to the list of conditions.
+7. Append the higher quantile to the list of values.
+8. Create the variable using conditions and values.
+9. Count missing values in mismatch thresholds.
+
+---
+
+### sm.pf
+
+Measure skill mismatch using Pellizzari and Fichen (2017) method.
+
+_Parameters:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, PIAAC dataset.
+
+**`skill_var` : str**, skill variable.
+
+**`precision` : float**, precision level for the skill mismatch thresholds, e.g., if `precision = 0.1`, the thresholds will be set at the 0.1 and 0.9 quantiles.
+
+**`dsa_relaxed` : bool**, relaxed DSA flag. If True, use relaxed DSA instead of regular DSA.
+
+**`log_df` : pandas.core.frame.DataFrame**, log DataFrame.
+
+_Returns:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, updated PIAAC dataset.
+
+**`log_df` : pandas.core.frame.DataFrame**, updated log DataFrame.
+
+_Description:_
+
+1. Create variable for the average of plausible values of the skill variable.
+2. Convert the skill variable to float, count missing values.
+3. Create skill mismatch thresholds using `pf_thresholds()`.
+4. Create variable for skill mismatch.
+5. Count missing values in skill mismatch.
+
+---
+
+### sm.alv
+
+Measure skill mismatch using Allen et al. (2013) method.
+
+_Parameters:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, PIAAC dataset.
+
+**`skill_var` : str**, skill variable.
+
+**`precision` : float**, precision level for the skill mismatch thresholds, e.g., if `precision = 1.5`, the thresholds will be set at the 1.5 and -1.5 z-scores.
+
+**`log_df` : pandas.core.frame.DataFrame**, log DataFrame.
+
+_Returns:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, updated PIAAC dataset.
+
+**`log_df` : pandas.core.frame.DataFrame**, updated log DataFrame.
+
+_Description:_
+
+1. Create variable for the average of plausible values of the skill variable.
+2. Convert the skill variable to float, count missing values.
+3. Create and standardise aggregate skill use variable.
+4. Create Allen-Levels-van-der-Velden skill mismatch variable.
+5. Check and drop for missing values in ALV skill mismatch.
+
+---
+
+### graphs.format_float
+
+Convert a float to a string with a specified format.
+
+_Parameters:_
+
+**`fmt` : str**, a format string.
+
+**`val` : float**, a float to be formatted.
+
+_Returns:_
+
+**`str`**, a formatted string.
+
+_Example:_
+
+```python
+>>> format_float("%.2f", 3.14159)
+"3.14"
+>>> format_float("%.2f", -3.14159)
+"-3.14"
+```
+
+---
+
+### graphs.shares_heatmap
+
+Plot a heatmap of the mismatch shares.
+
+_Parameters:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, a DataFrame containing the PIAAC data.
+
+**`measures_list` : list**, a list of the mismatch measures variable names.
+
+**`measures_labels` : list**, a list of the labels for the mismatch measures.
+
+**`group_var` : str**, a variable name identifying the group level.
+
+**`sort_by` : str**, a variable name used to sort the mismatch shares.
+
+**`title` : str**, a title of the heatmap.
+
+**`y_labels` : bool**, a boolean indicating whether to display y-axis labels.
+
+**`x_labels` : bool**, a boolean indicating whether to display x-axis labels.
+
+**`colorbar` : bool**, a boolean indicating whether to display a colorbar. Default is True.
+
+**`numbers` : bool**, a boolean indicating whether to display numbers in the heatmap. Default is True.
+
+**`nan_present` : bool**, a boolean indicating whether NaN values are present in the data. Default is True.
+
+**`size` : tuple**, a size of the heatmap. Default is (5, 15).
+
+**`vertical` : bool**, a boolean indicating whether to plot the heatmap vertically. Default is True.
+
+**`filename` : str**, a filename to save the heatmap. Default is 'shares_heatmap'.
+
+**`display` : bool**, a boolean indicating whether to display the plot. Default is True.
+
+**`save` : bool**, a boolean indicating whether to save the plot. Default is True.
+
+_Returns:_
+
+**`plt` : matplotlib.pyplot**, a plot of the heatmap.
+
+_Description:_
+
+1. Create a heatmap of the mismatch shares using the specified parameters.
+2. Display and/or save the heatmap based on the `display` and `save` flags.
+3. Return the plot object.
+
+---
+
+### graphs.corr_heat_map
+
+Plot a heatmap of the correlation matrix.
+
+_Parameters:_
+
+**`piaac_df` : pandas.core.frame.DataFrame**, a DataFrame containing the PIAAC data.
+
+**`corr_type` : str**, a type of correlation coefficient: 'matthews' or 'pearson'.
+
+**`measures_list` : list**, a list of the mismatch measures variable names.
+
+**`measures_labels` : list**, a list of the labels for the mismatch measures.
+
+**`country` : str**, a country name or 'all'.
+
+**`title` : str**, a title of the heatmap.
+
+**`x_labels` : bool**, a boolean indicating whether to display x-axis labels.
+
+**`y_labels` : bool**, a boolean indicating whether to display y-axis labels.
+
+**`size` : tuple**, a size of the heatmap. Default is (5, 5).
+
+**`filename` : str**, a filename to save the heatmap. Default is 'corr_heatmap'.
+
+**`display` : bool**, a boolean indicating whether to display the plot. Default is True.
+
+**`save` : bool**, a boolean indicating whether to save the plot. Default is True.
+
+_Returns:_
+
+**`plt` : matplotlib.pyplot**, a plot of the heatmap.
+
+_Description:_
+
+1. Compute the correlation matrix using the specified correlation type.
+2. Create a heatmap of the correlation matrix using the specified parameters.
+3. Display and/or save the heatmap based on the `display` and `save` flags.
+4. Return the plot object.
+
 # Codebook
 
 [International](https://www.oecd.org/content/dam/oecd/en/about/programmes/edu/piaac/data-materials/International-Codebook-PIAAC-Public-use-File-Variables-and-Values_Feb2023.xlsx) and [derived variables](https://www.oecd.org/content/dam/oecd/en/about/programmes/edu/piaac/data-materials/Codebook-for-derived-Variables-16March2015.docx) [cedobooks](https://www.oecd.org/en/data/datasets/piaac-1st-cycle-database.html#codebooks) are available at the PIAAC [website](https://www.oecd.org/en/about/programmes/piaac/piaac-data.html).
