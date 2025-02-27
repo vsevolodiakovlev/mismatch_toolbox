@@ -551,8 +551,8 @@ log[184] file is saved as mcc_test_o.pdf
 
 ```
 
-<img src="./figures/mcc_test_u.png" weidth="150">
-<img src="./figures/mcc_test_o.png" weidth="150">
+<img src="./figures/mcc_test_u.png" weidth="100">
+<img src="./figures/mcc_test_o.png" weidth="100">
 
 # Functions
 
