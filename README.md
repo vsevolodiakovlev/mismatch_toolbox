@@ -556,14 +556,14 @@ log[184] file is saved as mcc_test_o.pdf
 
 # Functions
 
-| Module    | Functions                                                                 |
-|-----------|---------------------------------------------------------------------------|
-| `utilities` | [`section`](#utilitiessection)  [`log`](#utilitieslog)  [`print`](#utilitiesprint)  [`mismatch_shares`](#utilitiesmismatch_shares)  [`mismatch_split`](#utilitiesmismatch_split)  [`mcc_matrix`](#utilitiesmcc_matrix) |
-| `clean`     | [`drop_nan`](#cleandrop_nan)  [`drop_val`](#cleandrop_val)  [`preparation`](#cleanpreparation) |
-| `isco`      | [`occupations`](#iscooccupations)  [`education`](#iscoeducation) |
-| `em`        | [`mean_sl`](#emmeansl)  [`mode_sl`](#emmode_sl)  [`rm_mean`](#emrm_mean)  [`rm_mode`](#emrm_mode)  [`ja`](#emja)  [`isa`](#emisa) |
-| `sm`        | [`dsa`](#smdsa)  [`pf_thresholds`](#smpf_thresholds)  [`pf`](#smpf)  [`alv`](#smalv) |
-| `graphs`    | [`format_float`](#graphsformat_float)  [`shares_heatmap`](#graphsshares_heatmap)  [`corr_heat_map`](#graphscorr_heat_map) |
+| Module    | Functions                                                                 |  Description |
+|-----------|---------------------------------------------------------------------------|--------------|
+| `utilities` | [`section`](#utilitiessection)  [`log`](#utilitieslog)  [`print`](#utilitiesprint)  [`mismatch_shares`](#utilitiesmismatch_shares)  [`mismatch_split`](#utilitiesmismatch_split)  [`mcc_matrix`](#utilitiesmcc_matrix) | Assisting data processing and analysis |
+| `clean`     | [`drop_nan`](#cleandrop_nan)  [`drop_val`](#cleandrop_val)  [`preparation`](#cleanpreparation) | Data cleaning |
+| `isco`      | [`occupations`](#iscooccupations)  [`education`](#iscoeducation) | Cleanomg existing and create additional occupation and education variables based on ISCO-08 |
+| `em`        | [`mean_sl`](#emmeansl)  [`mode_sl`](#emmode_sl)  [`rm_mean`](#emrm_mean)  [`rm_mode`](#emrm_mode)  [`ja`](#emja)  [`isa`](#emisa) | Computing education mismatch measures |
+| `sm`        | [`dsa`](#smdsa)  [`pf_thresholds`](#smpf_thresholds)  [`pf`](#smpf)  [`alv`](#smalv) | Computing skill mismatch measures |
+| `graphs`    | [`format_float`](#graphsformat_float)  [`shares_heatmap`](#graphsshares_heatmap)  [`corr_heat_map`](#graphscorr_heat_map) | Labour mismatch data visualisation |
 
 ---
 
