@@ -1,4 +1,4 @@
-# Labout Mismatch Toolbox for PIAAC
+# Labour Mismatch Toolbox for PIAAC
 
 [Usage](#usage) | [Example](#example) | [Functions](#functions) | [Codebook](#codebook) | [References](#references)
 
