@@ -109,7 +109,7 @@ log[18] n=150650
 log[19] removing the observations...
 log[20] no observations have the value of nan for [earn]
 log[21] n=76713; 73937 observations have been removed
-log[22] trim earningns at the 1st and 99th percentiles
+log[22] trim earnings at the 1st and 99th percentiles
 log[23] n=75188
 
 ISCO-08 skill level
@@ -173,7 +173,7 @@ log[54] check and drop for custom occupation groups
 log[55] 493 observations have the value of nan for [isco_lbl]
 log[56] n=74445
 log[57] removing the observations...
-log[58] dropping armed orces due to small sample
+log[58] dropping armed forces due to small sample
 log[59] n=73952
 log[60] dropping observations with [isco2c]==[1, 2, 3]
 log[61] n=73675; 277 observations have been removed
@@ -186,8 +186,8 @@ log[66] n=73135; 540 observations have been removed
 
 ### 3. Compute mismatch classification using five different measures with selected parameters
 - Job Analysis
-- Realised Matches with mode ± 1 standard deviation thesholds
-- Indirect Self-Assessment with 1 year gap
+- Realised Matches with mode ± 1 standard deviation thresholds
+- Indirect Self-Assessment with 1-year gap
 - Pellizzari-Fichen for numeracy with the thresholds set using regular Direct Skill Assessment and the 5th and 95th percentiles
 - Allen-Levels-Van-der-Velden for numeracy with 1.5 z-score thresholds
 
@@ -307,7 +307,7 @@ log[123] converting [num] to float
 log[124] missing values cleaning skipped for [num]
 log[125] 2 observations have the value of nan for [num]
 log[126] creating [num_zscore] (standardising)
-log[127] numeracy numeracy use variables to float
+log[127] numeracy use variables to float
 log[128] creating and standardising aggregate numeracy use variables
 log[129] creating Allen-Levels-van-der-Velden skill mismatch variable for numeracy
 log[130] missing values cleaning skipped for [alv_num_15]
@@ -556,7 +556,7 @@ log[184] file is saved as mcc_test_o.pdf
 
 # Functions
 
-| Module    | Functions                                                                 |  Description |
+| Module    | Function                                                                  |  Description |
 |-----------|---------------------------------------------------------------------------|--------------|
 | `utilities` | [`section`](#utilitiessection)  [`log`](#utilitieslog)  [`print`](#utilitiesprint)  [`mismatch_shares`](#utilitiesmismatch_shares)  [`mismatch_split`](#utilitiesmismatch_split)  [`mcc_matrix`](#utilitiesmcc_matrix) | Assisting data processing and analysis |
 | `clean`     | [`drop_nan`](#cleandrop_nan)  [`drop_val`](#cleandrop_val)  [`preparation`](#cleanpreparation) | Data cleaning |
